@@ -1,0 +1,134 @@
+define(["lib/window"], function(window) {
+    "use strict";
+
+    return function(socket, element, width, height) {
+        var controller = {
+            input_data: {
+                x: 0,
+                y: 0,
+                touches: [],
+                keys: []
+            },
+
+            keys: {},
+
+            key_map: function() {
+                var map = {
+                    '9': 'tab',
+                    '17': 'control',
+                    '18': 'alt',
+                    '27': 'escape',
+                    '32': 'space',
+                    '37': 'left',
+                    '38': 'up',
+                    '39': 'right',
+                    '40': 'down'
+                };
+
+                for(var i = 48; i <= 90; i++) {
+                    if (i > 57 && i < 65) { continue ;}
+                    if (map[i] !== undefined) {
+                        continue;
+                    }
+                    map[i] = String.fromCharCode(i);
+                } 
+
+                return map;
+            },
+            mouse_map: function() {
+                return {
+                    '1': 'button1',
+                    '3': 'button2'
+                };
+            },
+            
+            press: function(key) { 
+                this.keys[key] = true; 
+            },
+            
+            release: function(key) { 
+                this.keys[key] = false; 
+            },
+
+            handleClickOrTouch: function(func, value, e) {
+                func(value); 
+                e.preventDefault();
+                e.stopPropagation();
+            },
+
+            detectButtonsMappingToKeys: function() {
+                _.each(this.key_map(), function(value, key) {
+                    var classname = ".button.key-"+value;
+                    if ('ontouchstart' in window) {
+                        $(classname).on('touchstart', function(e) { this.handleClickOrTouch(this.press.bind(this), value, e); }.bind(this));
+                        $(classname).on('touchend', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
+                    } else {
+                        $(classname).on('mousedown', function(e) { this.handleClickOrTouch(this.press.bind(this), value, e); }.bind(this));
+                        $(classname).on('mouseup', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
+                    }
+                }.bind(this));
+            },
+
+            bindToWindowEvents: function() {
+                $("#"+element).on('mousemove', function(e) {
+                    this.input_data.x = e.layerX;
+                    this.input_data.y = e.layerY;
+                }.bind(this));
+
+                $(window).on('mousedown', function(e) {
+                    this.press(this.mouse_map()[e.which]);
+                    e.preventDefault();
+                }.bind(this));
+
+                $(window).on('mouseup', function(e) {
+                    this.release(this.mouse_map()[e.which]);
+                    e.preventDefault();
+                }.bind(this));
+
+                $(window).on('touchstart', function(e) {
+                    _.each(e.touches, function(touch) {
+                        this.input_data.touches.push({ id: touch.identifier, x: touch.clientX, y: touch.clientY, force: touch.webkitForce || 1 });
+                    });
+                }.bind(this));
+
+                $(window).on('touchend', function(e) {
+                    var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
+                    this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                }.bind(this));
+
+                $(window.document).keydown(function(e) {
+                    if (e.metaKey) { return; }
+
+                    this.press(this.key_map()[e.which]);
+                    e.preventDefault();
+                }.bind(this));
+
+                $(window.document).keyup(function(e) {
+                    this.release(this.key_map()[e.which]);
+                }.bind(this));
+
+                $(window).on('blur', function() { socket.emit('pause'); }.bind(this));
+                $(window).on('focus', function() { socket.emit('unpause'); }.bind(this));
+            },
+
+            emit: function() { 
+                var keys_to_send = [];
+                _.each(this.keys, function(value, key) {
+                    if (value) { 
+                        keys_to_send.push(key); 
+                    }
+                });
+                this.input_data.keys = keys_to_send;
+                
+                socket.emit('input', this.input_data);
+            },
+            notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 60); }
+        };
+
+        controller.detectButtonsMappingToKeys();
+        controller.bindToWindowEvents();
+        controller.notifyServerOfInput();
+
+        return controller;
+    };
+});
