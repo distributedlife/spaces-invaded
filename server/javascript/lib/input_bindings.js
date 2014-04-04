@@ -17,6 +17,15 @@ module.exports = function(game_state, user_input, action_map) {
 				game_state[target][func](1.0);
 			})
 
+			_.each(user_input.raw_data.touches, function(touch) {
+				var key = "touch"+touch.id;
+				if (action_map[key] === undefined) { return; }
+
+				_.each(action_map[key], function(action) { 
+					game_state[action.target][action.func](touch.x, touch.y);
+				});
+			});
+
 			if (action_map['cursor'] !== undefined) {
 				_.each(action_map['cursor'], function(action) {
 					var target = action.target;

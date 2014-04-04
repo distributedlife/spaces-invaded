@@ -70,11 +70,6 @@ define(["lib/window"], function(window) {
             },
 
             bindToWindowEvents: function() {
-                $("#"+element).on('mousemove', function(e) {
-                    this.input_data.x = e.layerX;
-                    this.input_data.y = e.layerY;
-                }.bind(this));
-
                 $(window).on('mousedown', function(e) {
                     this.press(this.mouse_map()[e.which]);
                     e.preventDefault();
@@ -85,13 +80,20 @@ define(["lib/window"], function(window) {
                     e.preventDefault();
                 }.bind(this));
 
-                $(window).on('touchstart', function(e) {
-                    _.each(e.touches, function(touch) {
-                        this.input_data.touches.push({ id: touch.identifier, x: touch.clientX, y: touch.clientY, force: touch.webkitForce || 1 });
-                    });
+                $("#"+element).on('mousemove', function(e) {
+                    this.input_data.x = e.layerX;
+                    this.input_data.y = e.layerY;
                 }.bind(this));
 
-                $(window).on('touchend', function(e) {
+                $("#"+element).on('touchstart', function(e) {
+                    _.each(e.touches, function(touch) {
+                        var x = touch.clientX - touch.target.offsetLeft;
+                        var y = touch.clientY - touch.target.offsetTop;
+                        this.input_data.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
+                    }.bind(this));
+                }.bind(this));
+
+                $("#"+element).on('touchend', function(e) {
                     var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
                     this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
                 }.bind(this));
