@@ -17,10 +17,7 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
         var init = function(width, height) {
             var socket = io.connect('/desktop');
 
-            socket.emit('resize', {
-                width: width,
-                height: height
-            });
+            socket.emit('resize', { width: width, height: height });
 
             var tank = null;
             var bullet = null;
@@ -95,7 +92,6 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
         // var soundtrack = new AudioEmitter(sound_manager, 'soundtrack', config.audio_path + 'soundtrack.mp3');
         // soundtrack.volume = 30;
         // soundtrack.play();
-
         };
 
         init(width, height);

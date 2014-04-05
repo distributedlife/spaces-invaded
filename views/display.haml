@@ -2,13 +2,11 @@
 %html{lang: "en"}
   %head
     %meta{charset: "UTF-8"}
-    %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/index.css"}
+    %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/lib.css"}
+    %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/game.css"}
     %script{'data-main': "/client/javascript/display.js", src: "/client/javascript/ext/require.js"}
     %script{src: "/client/javascript/config.js"}
   %body
     .paused
       %h1 PAUSED
-    #game_screen.tv_frame
-    .button.key-left Left
-    .button.key-right Right
-    .button.key-space Shoot
+    #canvas.tv_frame

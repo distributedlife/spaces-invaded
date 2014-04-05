@@ -1,4 +1,4 @@
-define(["lib/window", "lib/scene_renderer"], function(window, SceneRenderer) {
+define(['zepto', "lib/window", "lib/scene_renderer"], function($, window, SceneRenderer) {
   "use strict";
 
   return function(display, element, width, height) {
@@ -11,6 +11,10 @@ define(["lib/window", "lib/scene_renderer"], function(window, SceneRenderer) {
     };
 
     return {
+      resize: function(width, height) {
+        this.scene_renderer.resize(width, height);
+        display.resize(width, height);
+      },
       scene_renderer: build_scene_renderer(),    
       run: function() {
         this.scene_renderer.animate();

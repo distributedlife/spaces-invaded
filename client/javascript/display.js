@@ -1,14 +1,11 @@
-require(["lib/engine_assembler", "game/views/display"], function (EngineAssembler, Display) {
+require(["lib/rendering_engine_assembler", "game/views/display", "lib/window", "zepto"], function (RenderingEngineAssembler, Display, window, $) {
   "use strict";
 
   return function() {
     var engine_config = {
-      width: 900,
-      height: 600,
-      canvas: "game_screen",
       display: Display
     };
 
-    return Object.create(EngineAssembler(engine_config)).run();
+    Object.create(RenderingEngineAssembler(engine_config)).run();
   }();
 });
