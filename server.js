@@ -2,8 +2,14 @@
 
 var express = require('express');
 var app = express(express.logger());
+require('./configure_express')(app, express, require('consolidate'));
+
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
+io.enable('browser client minification');
+io.enable('browser client etag');
+io.enable('browser client gzip');
+io.set('log level', 1); 
 
 var entities = {
   bullet: require('./server/javascript/game/bullet'),
@@ -25,5 +31,4 @@ var game_engine = require('./server/javascript/lib/engine')(game_state, game_log
 game_engine.run();
 
 require('./requirejs_node_config')(require('requirejs'));
-require('./configure_express')(app, express, require('consolidate'));
 server.listen(process.env.PORT || 3000);

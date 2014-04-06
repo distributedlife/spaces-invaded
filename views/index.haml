@@ -1,0 +1,78 @@
+!!!5
+%html{lang: "en"}
+  %head
+    %meta{charset: "UTF-8"}
+    %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/site.css"}
+    %script{src: "/client/javascript/ext/qrcode.min.js"}
+  %body
+    .framing-device
+      .option
+        .header
+          %h3 Use display with Mobile Controller
+        .icons
+          .desktop-display
+            %img{src: "/client/site/img/desktop.png"}
+          .mobile
+            %img{src: "/client/site/img/mobile.png"}
+        .qr
+          %p Scan QR code to launch the controller on your mobile.
+          #qr-controller
+          %script{type: "text/javascript"}
+          :javascript
+            new QRCode(document.getElementById("qr-controller"), {text: "http://distributedlife.com/spaces-invaded/controller", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
+          %p Or, navigate to:
+          .url
+            \/controller
+        .buttons
+          .btn
+            %a{href: "/observer"} Click here when the controller is ready.
+      .option
+        .header
+          %h3 Use display with Keyboard and Mouse
+        .icons
+          .desktop-display
+            %img{src: "/client/site/img/desktop.png"}
+          .keyboard
+            %img{src: "/client/site/img/keyboard.png"}
+        .qr
+        .buttons
+          .btn
+            %a{href: "/desktop"} Click here to start playing
+      .option
+        .header
+          %h3 Play on Mobile
+        .icons
+          .mobile
+            %img{src: "/client/site/img/mobile.png"}
+        .qr
+          %p Scan QR code to launch the game on your mobile.
+          #qr-mobile
+          %script{type: "text/javascript"}
+          :javascript
+            new QRCode(document.getElementById("qr-mobile"), {text: "http://distributedlife.com/spaces-invaded/mobile", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
+          %p Or, navigate to:
+          .url
+            \/mobile
+        .buttons
+      .option
+        .header
+          %h3 Use display with Game Controller
+        .icons
+          .desktop-display
+            %img{src: "/client/site/img/desktop.png"}
+          .controller
+            %img{src: "/client/site/img/controller.png"}
+        .qr
+        .buttons
+          .btn
+            %a{href: "/desktop"} Click here to start playing
+      .option
+        .header
+          %h3 Watch Game
+        .icons
+          .desktop-display
+            %img{src: "/client/site/img/desktop.png"}
+        .qr
+        .buttons
+          .btn
+            %a{href: "/observer"} Click here to start watching a game.

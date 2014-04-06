@@ -1,8 +1,9 @@
-define(["lib/window"], function(window) {
+define(["lib/window", "lodash"], function(window, _) {
     "use strict";
 
     return function(socket, element, width, height) {
         var controller = {
+            last_sent: {},
             input_data: {
                 x: 0,
                 y: 0,
@@ -110,10 +111,10 @@ define(["lib/window"], function(window) {
                 }.bind(this));
 
                 $(window).on('blur', function() { socket.emit('pause'); }.bind(this));
-                $(window).on('focus', function() { socket.emit('unpause'); }.bind(this));
+                $(window).on('focus', function() { console.log('focus');socket.emit('unpause'); }.bind(this));
             },
 
-            emit: function() { 
+            emit: function() {
                 var keys_to_send = [];
                 _.each(this.keys, function(value, key) {
                     if (value) { 
@@ -122,7 +123,12 @@ define(["lib/window"], function(window) {
                 });
                 this.input_data.keys = keys_to_send;
                 
+                if (_.isEqual(this.input_data, this.last_sent)) {
+                    return;
+                }
+
                 socket.emit('input', this.input_data);
+                this.last_sent = _(this.input_data).clone();
             },
             notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 60); }
         };

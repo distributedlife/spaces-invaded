@@ -7,7 +7,9 @@ module.exports = function(requirejs) {
       underscore: "npm/underscore-min",
       events: "npm/events",
       bacon: "npm/bacon",
-      zepto: "ext/zepto.min"
+      zepto: "ext/zepto.min",
+      jquery: "ext/zepto.min",
+      lodash: "ext/lodash.min"
     },
     shim: {
       zepto: {

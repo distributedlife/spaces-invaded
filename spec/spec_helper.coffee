@@ -2,7 +2,7 @@ exports.requirejs = ( ->
   requirejs = require('requirejs')
 
   requirejs.config(
-    baseUrl: __dirname + '/../public/javascript'
+    baseUrl: __dirname + '/../client/javascript'
     nodeRequire: require
     shim:
       'ext/asevented':

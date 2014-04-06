@@ -1,5 +1,13 @@
 module.exports = function(app, game_state) {
-	app.get('/display', function(request, response) {
+	app.get('/', function(request, response) {
+		response.render('index.haml');
+	});
+
+	app.get('/observer', function(request, response) {
+		response.render('observer.haml');
+	});
+
+	app.get('/desktop', function(request, response) {
 		response.render('display.haml');
 	});
 
@@ -7,7 +15,15 @@ module.exports = function(app, game_state) {
 		response.render('controller.haml');
 	});
 
-	app.get("/new", function(request, response) {
-		game_state.reset();
+	app.get("/editor", function(request, response) {
+		response.render('json.haml');
+	});
+
+	app.get("/data", function(request, response) {
+		response.json(game_state);
+	});
+
+	app.post("/data", function(request, response) {
+		game_state = request.body;
 	});
 };

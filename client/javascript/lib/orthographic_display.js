@@ -1,4 +1,4 @@
-define(["underscore", "ext/three", "lib/grid_view"], function(_, THREE, GridView) {
+define(["underscore", "ext/three", "lib/grid_view", "lib/any_old_display"], function(_, THREE, GridView, AnyOldDisplay) {
   "use strict";
 
   return function(width, height) {
@@ -16,14 +16,18 @@ define(["underscore", "ext/three", "lib/grid_view"], function(_, THREE, GridView
       return scene;
     };
 
-    return {
-      resize: function(width, height) {
+    var add_orthographic_display_funcs = function(base_display) {
+      base_display.resize = function(width, height) {
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-      },
-      camera: setup_camera(),
-      scene: create_a_scene(),
-      add_to_scene: function() { _.each(arguments, function(mesh) { this.scene.add(mesh); }.bind(this)); },
-    }
+      };
+      base_display.camera = setup_camera();
+      base_display.scene = create_a_scene();
+      base_display.add_to_scene = function() { _.each(arguments, function(mesh) { this.scene.add(mesh); }.bind(this)); };
+
+      return base_display;
+    };
+
+    return add_orthographic_display_funcs(Object.create(AnyOldDisplay));
   };
 });

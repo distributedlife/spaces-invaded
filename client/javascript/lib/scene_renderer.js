@@ -3,7 +3,7 @@ define(["ext/three"], function(THREE) {
 
   return function(scene, camera) {
     return {
-      renderer: new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }),
+      renderer: new THREE.WebGLRenderer({ antialias: true }),
       resize: function(width, height) {
         this.renderer.setSize(width, height);
       },

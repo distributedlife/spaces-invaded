@@ -1,0 +1,22 @@
+!!!5
+%html{lang: "en"}
+  %head
+    %meta{charset: "UTF-8"}
+    %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/jsoneditor-min.css"}
+    %script{src: "/client/javascript/ext/jsoneditor-min.js"}
+    %script{src: "/client/javascript/ext/zepto.min.js"}
+  %body
+    #jsoneditor
+    %script{type: "text/javascript"}
+    :javascript
+      var container = document.getElementById("jsoneditor");
+      var editor = new jsoneditor.JSONEditor(container);
+      
+      $.getJSON("/data", function(data) { editor.set(data); });
+    %a#post{href: "#"} Update Server
+    %script{type: "text/javascript"}
+    :javascript
+      $("#post").on('click', function(e) {
+        e.preventDefault();
+        $.post("/data", editor.get())
+      });

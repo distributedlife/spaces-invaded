@@ -11,10 +11,10 @@ define(["ext/three", "lib/config"], function(THREE, config) {
     return {
       mesh: mesh,
 
-      update_from_model: function(model) {
-        this.mesh.position.x = model.x;
-        this.mesh.position.y = model.y;
-        this.mesh.visible = model.active;
+      update_from_model: function(updated_model) {
+        this.mesh.position.x = updated_model.x;
+        this.mesh.position.y = updated_model.y;
+        this.mesh.visible = updated_model.active;
       }
     }
   };

@@ -32,25 +32,12 @@ module.exports = function(bullet) {
       }
     },
 
-    move_left: function(force) {
-      this.to_move = this.maxVelocity * force * -1;
-    },
-    
-    move_right: function(force) {
-      this.to_move = this.maxVelocity * force * 1;
-    },
+    move_left: function(force) { this.to_move = this.maxVelocity * force * -1; },
+    move_right: function(force) { this.to_move = this.maxVelocity * force * 1; },
+    stop: function() { this.to_move = 0; },
 
-    stop: function() {
-      this.to_move = 0;
-    },
-
-    stop_left: function() {
-      if (this.to_move < 0) { this.stop(); }
-    },
-
-    stop_right: function() {
-      if (this.to_move > 0) { this.stop(); }
-    },
+    stop_left: function() { if (this.to_move < 0) { this.stop(); } },
+    stop_right: function() { if (this.to_move > 0) { this.stop(); } },
     
     move: function(delta) {
       var move_this_frame = ~~ (this.to_move * delta);

@@ -6,7 +6,7 @@ module.exports = function(entities) {
     state.tank = Object.create(entities.tank(state.bullet));
     state.players = 0;
     state.observers = 0;
-    state.paused = false;
+    state.paused = true;
     state.all_the_things = [this.bullet, this.tank];
     state.dimensions = {
       width: 0,

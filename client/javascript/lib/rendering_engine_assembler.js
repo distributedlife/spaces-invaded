@@ -20,7 +20,7 @@ define(["lib/window", "lib/rendering_engine", "lib/dimensions"], function (windo
                 this.engine.resize(screen.width, screen.height);
             },
             engine: RenderingEngine(
-                new config.display(config.canvas, config.width, config.height),
+                new config.display(config.canvas, config.width, config.height, config.observer),
                 window.get_element_by_id(config.canvas),
                 config.width, 
                 config.height

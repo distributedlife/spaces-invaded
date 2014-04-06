@@ -12,19 +12,24 @@ module.exports = function(game_state, user_input, action_map) {
 				});
 			});
 		},
-		map_input_to_action: function() {
-			this.parse_keys_and_buttons(function(target, func) {
-				game_state[target][func](1.0);
-			})
-
+		parse_touches: function(callback) {
 			_.each(user_input.raw_data.touches, function(touch) {
 				var key = "touch"+touch.id;
 				if (action_map[key] === undefined) { return; }
 
 				_.each(action_map[key], function(action) { 
-					game_state[action.target][action.func](touch.x, touch.y);
+					callback(action.target, action.func, touch.x, touch.y);
 				});
 			});
+		},
+		map_input_to_action: function() {
+			this.parse_keys_and_buttons(function(target, func) {
+				game_state[target][func](1.0);
+			})
+
+			this.parse_touches(function(target, func, x, y) {
+				game_state[target][func](x, y);
+			})
 
 			if (action_map['cursor'] !== undefined) {
 				_.each(action_map['cursor'], function(action) {
@@ -33,7 +38,7 @@ module.exports = function(game_state, user_input, action_map) {
 
 					var cx = user_input.raw_data.x;
 					var cy = user_input.raw_data.y;
-					game_state[target][action](cx, cy);
+					game_state[target][func](cx, cy);
 				});
 			}
 		},
@@ -46,13 +51,17 @@ module.exports = function(game_state, user_input, action_map) {
 			this.parse_keys_and_buttons(function(target, func) {
 				recieved_input.push(target);
 			});
-			
+
+			this.parse_touches(function(target, func, x, y) {
+				recieved_input.push(target);
+			});
+
 			_.each(action_map['nothing'], function(action) {
 				var target = action.target;
 				var func = action.func;
 
 				if (recieved_input.indexOf(target) === -1) {
-					game_state[target][action.func]();
+					game_state[target][func]();
 				}
 			});
 		}
