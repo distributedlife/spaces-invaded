@@ -1,15 +1,15 @@
-require(["lib/assembly", "game/engine", "game/views/display"], function (Assembly, Engine, Display) {
+require(["lib/rendering_engine_assembler", "game/views/dedicated_controller"], function (RenderingEngineAssembler, DedicatedController) {
   "use strict";
 
   return function() {
-    var config = {
-      width: 900,
-      height: 600,
-      canvas: "game_screen",
-      game: Engine,
-      display: Display
+    var engine_config = {
+      display_config: {
+        controls: ['left:joystick-2-left-right', 'right:buttons-1']
+      },
+      display: DedicatedController,
+      webgl: false
     };
 
-    return new Assembly(config);
+    Object.create(RenderingEngineAssembler(engine_config)).run();
   }();
 });

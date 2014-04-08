@@ -63,9 +63,12 @@ define(["lib/window", "lodash"], function(window, _) {
                     if ('ontouchstart' in window) {
                         $(classname).on('touchstart', function(e) { this.handleClickOrTouch(this.press.bind(this), value, e); }.bind(this));
                         $(classname).on('touchend', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
+                        $(classname).on('touchcancel', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
+                        $(classname).on('touchleave', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
                     } else {
                         $(classname).on('mousedown', function(e) { this.handleClickOrTouch(this.press.bind(this), value, e); }.bind(this));
                         $(classname).on('mouseup', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
+                        $(classname).on('mouseleave', function(e) { this.handleClickOrTouch(this.release.bind(this), value, e); }.bind(this));
                     }
                 }.bind(this));
             },
@@ -77,6 +80,11 @@ define(["lib/window", "lodash"], function(window, _) {
                 }.bind(this));
 
                 $(window).on('mouseup', function(e) {
+                    this.release(this.mouse_map()[e.which]);
+                    e.preventDefault();
+                }.bind(this));
+
+                $(window).on('mouseleave', function(e) {
                     this.release(this.mouse_map()[e.which]);
                     e.preventDefault();
                 }.bind(this));
@@ -94,7 +102,25 @@ define(["lib/window", "lodash"], function(window, _) {
                     }.bind(this));
                 }.bind(this));
 
+                $("#"+element).on('touchmove', function(e) {
+                    _.each(e.touches, function(touch) {
+                        var x = touch.clientX - touch.target.offsetLeft;
+                        var y = touch.clientY - touch.target.offsetTop;
+                        this.input_data.touches.push({ id: touch.identifier, x: x, y: y, force: touch.webkitForce || 1 });
+                    }.bind(this));
+                }.bind(this));
+
                 $("#"+element).on('touchend', function(e) {
+                    var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
+                    this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                }.bind(this));
+
+                $("#"+element).on('touchleave', function(e) {
+                    var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
+                    this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
+                }.bind(this));
+
+                $("#"+element).on('touchcancel', function(e) {
                     var ids = _.map(e.changedTouches, function(touch) { return touch.identifier; }) ;
                     this.input_data.touches = _.reject(this.input_data.touches, function(touch) { return ids.indexOf(touch.id) !== -1});
                 }.bind(this));
@@ -111,7 +137,7 @@ define(["lib/window", "lodash"], function(window, _) {
                 }.bind(this));
 
                 $(window).on('blur', function() { socket.emit('pause'); }.bind(this));
-                $(window).on('focus', function() { console.log('focus');socket.emit('unpause'); }.bind(this));
+                $(window).on('focus', function() { socket.emit('unpause'); }.bind(this));
             },
 
             emit: function() {
@@ -128,7 +154,7 @@ define(["lib/window", "lodash"], function(window, _) {
                 }
 
                 socket.emit('input', this.input_data);
-                this.last_sent = _(this.input_data).clone();
+                this.last_sent = _.clone(this.input_data, true);
             },
             notifyServerOfInput: function() { setInterval(this.emit.bind(this), 1000 / 60); }
         };

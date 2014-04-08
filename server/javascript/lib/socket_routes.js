@@ -17,9 +17,21 @@ module.exports = function(io, game_state, user_input) {
 		game_state.players += 1;
 	}
 
+	var setup_controller = function(socket) {
+		socket.on('disconnect', function() { 
+			game_state.players -= 1; 
+			game_state.paused = true; 
+		});
+		socket.on('input', function(input_data) { user_input.raw_data = input_data; });
+		socket.on('pause', function() { game_state.paused = true; });
+		socket.on('unpause', function() { game_state.paused = false; });
+
+		game_state.players += 1;
+	}
+
 	var setup_observer = function(socket) {
 		socket.on('disconnect', function() { game_state.observers -= 1; });
-
+		//TODO: what happens when the observer screen resolution is different to the player screen resolution?
 		socket.emit("game_state/setup", game_state);
 		watchjs.watch(game_state, function() { socket.volatile.emit("game_state/update", game_state) });
 		
@@ -27,7 +39,7 @@ module.exports = function(io, game_state, user_input) {
 	}
 
 	io.of('/desktop').on('connection', setup_playable_client);
-	io.of('/controller').on('connection', setup_playable_client);
+	io.of('/controller').on('connection', setup_controller);
 	io.of('/mobile').on('connection', setup_playable_client);
 	io.of('/gamepad').on('connection', setup_playable_client);
 

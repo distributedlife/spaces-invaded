@@ -39,6 +39,10 @@ module.exports = function(bullet) {
     stop_left: function() { if (this.to_move < 0) { this.stop(); } },
     stop_right: function() { if (this.to_move > 0) { this.stop(); } },
     
+    joystick_move: function(x, y, force) {
+      this.to_move = this.maxVelocity * force * x; 
+    },
+
     move: function(delta) {
       var move_this_frame = ~~ (this.to_move * delta);
       this.x += move_this_frame;

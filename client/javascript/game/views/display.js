@@ -1,11 +1,9 @@
-define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash", "lib/controller"],
-  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _, Controller)
+define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash", "lib/keyboard_controller"],
+  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _, KeyboardController)
   {
     "use strict";
 
-    return function(element, width, height, observer) {
-        observer = observer || false;
-
+    return function(element, width, height, options) {
         var d = Object.create(OrthographicDisplay(width, height));
         d.state = {};
         var sound_manager = new SoundManager();
@@ -19,7 +17,7 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
         var init = function(width, height) {
             var socket = io.connect('/desktop', {'force new connection': true});
 
-            if (window.document.hasFocus() && !observer) {
+            if (window.document.hasFocus() && !options.observer) {
                 socket.emit('unpause');
             }
 
@@ -102,8 +100,8 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
         // soundtrack.volume = 30;
         // soundtrack.play();
 
-            if (!observer) {
-                Controller(socket, element, width, height);
+            if (!options.controls.indexOf("keyboard") !== -1) {
+                KeyboardController(socket, element, width, height);
             }
         };
 

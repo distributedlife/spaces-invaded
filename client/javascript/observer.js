@@ -3,8 +3,10 @@ require(["lib/rendering_engine_assembler", "game/views/display", "lib/window", "
 
   return function() {
     var engine_config = {
-      display: Display,
-      observer: true
+    	display_config: {
+    		observer: true
+    	},
+		display: Display
     };
 
     Object.create(RenderingEngineAssembler(engine_config)).run();
