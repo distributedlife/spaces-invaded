@@ -19,7 +19,7 @@
           #qr-controller
           %script{type: "text/javascript"}
           :javascript
-            new QRCode(document.getElementById("qr-controller"), {text: "/controller", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
+            new QRCode(document.getElementById("qr-controller"), {text: "http://spaces-invaded.herokuapp.com/controller", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
           %p Or, navigate to:
           .url
             \/controller
@@ -49,7 +49,7 @@
           #qr-mobile
           %script{type: "text/javascript"}
           :javascript
-            new QRCode(document.getElementById("qr-mobile"), {text: "/mobile", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
+            new QRCode(document.getElementById("qr-mobile"), {text: "http://spaces-invaded.herokuapp.com/mobile", width: 256, height: 256, colorDark : "#000000", colorLight : "#666", correctLevel : QRCode.CorrectLevel.H});
           %p Or, navigate to:
           .url
             \/mobile
