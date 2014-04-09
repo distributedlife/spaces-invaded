@@ -4,6 +4,7 @@ module.exports = function(app, game_state) {
 	app.get('/observer', function(req, res) { res.render('observer.haml'); });
 	app.get('/desktop', function(req, res) { res.render('display.haml'); });
 	app.get('/controller', function(req, res) { res.render('controller.haml'); });
+	app.get('/diagnostics', function(req, res) { res.render('diagnostics.haml'); });
 	app.get('/mobile', function(req, res) { res.render('mobile.haml'); });
 
 	app.get("/editor", function(req, res) { res.render('json.haml'); });

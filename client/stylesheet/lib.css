@@ -4,7 +4,7 @@
 .right { position: fixed; bottom: 0; right: 0; }
 
 .joystick { border: 1px black solid; }
-.buttons a { position: absolute; }
+.buttons a { position: absolute; text-align: center; font-size: 4em;}
 
 #b0 { background-color: red; }
 #b1 { background-color: green; }
