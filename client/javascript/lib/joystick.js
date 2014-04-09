@@ -3,6 +3,8 @@ define(["lib/vector_math"], function(vector_math) {
 
 	return {
 		point: function(e) {
+            $("#e").text(e.layerX+","+e.layerX);
+            $("#t").text(e.target.clientWidth+"x"+e.target.clientHeight);
             return {
                 x: ~~ (e.layerX / e.target.clientWidth * 100),
                 y: ~~ (e.layerY / e.target.clientHeight * 100)

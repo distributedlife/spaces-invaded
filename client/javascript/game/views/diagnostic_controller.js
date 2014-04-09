@@ -32,8 +32,7 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
             point.x /= 100;
             point.y /= 100;
 
-            $("#x").text(as_vector(point).x);
-            $("#y").text(as_vector(point).y);
+            $("#p").text(as_vector(point).x+","+as_vector(point).y);
         };
         var clear_touch = function(control, area_name) { 
             $(control).css("background-image", "");
@@ -81,8 +80,7 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
 
             var w = $(window).width();
             var h = $(window).height()
-            $("#w").text(w);
-            $("#h").text(h);
+            $("#d").text(w+"x"+h);
         };
 
         var calculate_button_size = function(size) {
