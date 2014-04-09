@@ -239,45 +239,45 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
             var clear_events = ['mouseup',  'mouseleave', 'touchend', 'touchleave'];
 
             _.each(joystick_apply_events, function(apply_event) {
-                $(".joystick-2-left-right").on(apply_event, function(e) {  apply_touch(this, side($(this)), joystick.centre_y(joystick.point(e))); e.preventDefault(); });
-                $(".joystick-2-up-down").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.centre_x(joystick.point(e))); e.preventDefault(); });
-                $(".joystick-4").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_4(joystick.point(e))); e.preventDefault(); });
-                $(".joystick-8").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_8(joystick.point(e))); e.preventDefault(); });
-                $(".joystick-N").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.point(e)); e.preventDefault(); });
-                $(".joystick-circle").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_circle(joystick.point(e))); e.preventDefault(); });
+                $(".joystick-2-left-right").on(apply_event, function(e) {  apply_touch(this, side($(this)), joystick.centre_y(joystick.point(e))); e.preventDefault(); return false; });
+                $(".joystick-2-up-down").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.centre_x(joystick.point(e))); e.preventDefault(); return false; });
+                $(".joystick-4").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_4(joystick.point(e))); e.preventDefault(); return false; });
+                $(".joystick-8").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_8(joystick.point(e))); e.preventDefault(); return false; });
+                $(".joystick-N").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.point(e)); e.preventDefault(); return false; });
+                $(".joystick-circle").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.snap_to_circle(joystick.point(e))); e.preventDefault(); return false; });
 
-                $(".directional-8").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.snap_to_8(joystick.point(e)))); e.preventDefault(); });
-                $(".directional-4").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.snap_to_4(joystick.point(e)))); e.preventDefault(); });
-                $(".directional-2-left-right").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(centre_y(joystick.point(e)))); e.preventDefault(); });
-                $(".directional-2-up-down").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.centre_x(joystick.point(e)))); e.preventDefault(); });
+                $(".directional-8").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.snap_to_8(joystick.point(e)))); e.preventDefault(); return false; });
+                $(".directional-4").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.snap_to_4(joystick.point(e)))); e.preventDefault(); return false; });
+                $(".directional-2-left-right").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(centre_y(joystick.point(e)))); e.preventDefault(); return false; });
+                $(".directional-2-up-down").on(apply_event, function(e) { apply_touch(this, side($(this)), joystick.constrain(joystick.centre_x(joystick.point(e)))); e.preventDefault(); return false; });
             });
             _.each(clear_events, function(clear_event) {
-                $(".joystick-2-left-right").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".joystick-2-up-down").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault();});
-                $(".joystick-4").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".joystick-8").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".joystick-N").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
+                $(".joystick-2-left-right").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".joystick-2-up-down").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".joystick-4").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".joystick-8").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".joystick-N").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
 
-                $(".directional-2-left-right").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".directional-2-up-down").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".directional-4").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
-                $(".directional-8").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); });
+                $(".directional-2-left-right").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".directional-2-up-down").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".directional-4").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
+                $(".directional-8").on(clear_event, function(e) {  clear_touch(this, side($(this))); e.preventDefault(); return false; });
             });
             _.each(button_apply_events, function(apply_event) {
-                $("#b0").on(apply_event, function(e) { press(this, 'button0'); e.preventDefault(); });    
-                $("#b1").on(apply_event, function(e) { press(this, 'button1'); e.preventDefault(); });    
-                $("#b2").on(apply_event, function(e) { press(this, 'button2'); e.preventDefault(); });    
-                $("#b3").on(apply_event, function(e) { press(this, 'button3'); e.preventDefault(); });    
-                $("#b4").on(apply_event, function(e) { press(this, 'button4'); e.preventDefault(); });    
-                $("#b5").on(apply_event, function(e) { press(this, 'button5'); e.preventDefault(); });                  
+                $("#b0").on(apply_event, function(e) { press(this, 'button0'); e.preventDefault(); return false; });    
+                $("#b1").on(apply_event, function(e) { press(this, 'button1'); e.preventDefault(); return false; });    
+                $("#b2").on(apply_event, function(e) { press(this, 'button2'); e.preventDefault(); return false; });    
+                $("#b3").on(apply_event, function(e) { press(this, 'button3'); e.preventDefault(); return false; });    
+                $("#b4").on(apply_event, function(e) { press(this, 'button4'); e.preventDefault(); return false; });    
+                $("#b5").on(apply_event, function(e) { press(this, 'button5'); e.preventDefault(); return false; });                  
             });
             _.each(clear_events, function(clear_event) {
-                $("#b0").on(clear_event, function(e) { release(this, 'button0'); e.preventDefault(); });    
-                $("#b1").on(clear_event, function(e) { release(this, 'button1'); e.preventDefault(); });    
-                $("#b2").on(clear_event, function(e) { release(this, 'button2'); e.preventDefault(); });    
-                $("#b3").on(clear_event, function(e) { release(this, 'button3'); e.preventDefault(); });    
-                $("#b4").on(clear_event, function(e) { release(this, 'button4'); e.preventDefault(); });    
-                $("#b5").on(clear_event, function(e) { release(this, 'button5'); e.preventDefault(); });    
+                $("#b0").on(clear_event, function(e) { release(this, 'button0'); e.preventDefault(); return false; });    
+                $("#b1").on(clear_event, function(e) { release(this, 'button1'); e.preventDefault(); return false; });    
+                $("#b2").on(clear_event, function(e) { release(this, 'button2'); e.preventDefault(); return false; });    
+                $("#b3").on(clear_event, function(e) { release(this, 'button3'); e.preventDefault(); return false; });    
+                $("#b4").on(clear_event, function(e) { release(this, 'button4'); e.preventDefault(); return false; });    
+                $("#b5").on(clear_event, function(e) { release(this, 'button5'); e.preventDefault(); return false; });    
             });    
         }
 
