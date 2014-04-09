@@ -3,15 +3,17 @@ define(["lib/vector_math"], function(vector_math) {
 
 	return {
 		point: function(e) {
-            var x = e.touches[0].clientX - e.touches[0].target.offsetLeft;
-            var y = e.touches[0].clientY - e.touches[0].target.offsetTop;
-            // _.each(e.touches, function(touch) {
-                $("#e").text(x+","+y);
-            // });
+            var x = 0;
+            var y = 0;
 
-            // console.log(e);
+            if (e.type.indexOf("mouse") === -1) {
+                x = e.touches[0].clientX - e.touches[0].target.offsetLeft;
+                y = e.touches[0].clientY - e.touches[0].target.offsetTop;
+            } else {
+                x = e.layerX;
+                y = e.layerY;
+            }
             
-            $("#t").text(e.target.clientWidth+"x"+e.target.clientHeight);
             return {
                 x: ~~ (x / e.target.clientWidth * 100),
                 y: ~~ (y / e.target.clientHeight * 100)

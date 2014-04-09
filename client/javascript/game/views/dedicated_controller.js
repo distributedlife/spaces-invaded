@@ -23,7 +23,14 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
             d.keys[button] = false;  
         };
 
-        var as_vector = function(point) { return { x: (point.x * 2) - 1, y: (point.y * 2) - 1 }; } ;
+        var as_vector = function(point) { 
+            if (point.x > 1.0) { point.x = 1.0 }
+            if (point.x < -1.0) { point.x = -1.0 }
+            if (point.y > 1.0) { point.y = 1.0 }
+            if (point.y < -1.0) { point.y = -1.0 }
+
+            return { x: (point.x * 2) - 1, y: (point.y * 2) - 1 }; 
+        } ;
 
         var apply_touch = function(control, area_name, point) { 
             $(control).css("background-image", "radial-gradient(at "+point.x+"% "+point.y+"%, #000, #FFF)"); 
@@ -31,7 +38,7 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
             point.x /= 100;
             point.y /= 100;
 
-            d.input_data[area_name+'_stick'] = as_vector(point)
+            d.input_data[area_name+'_stick'] = as_vector(point);
             d.input_data[area_name+'_stick'].force = Math.abs(vector_math.lineDistance(d.input_data[area_name+'_stick'], {x: 0, y: 0}));
         };
         var clear_touch = function(control, area_name) { 

@@ -24,7 +24,14 @@ define(["socket.io", "lib/config", "zepto", "lodash", "lib/any_old_display", "li
             $(control).removeClass("pressed");
         };
 
-        var as_vector = function(point) { return { x: (point.x * 2) - 1, y: (point.y * 2) - 1 }; } ;
+        var as_vector = function(point) { 
+            if (point.x > 1.0) { point.x = 1.0 }
+            if (point.x < -1.0) { point.x = -1.0 }
+            if (point.y > 1.0) { point.y = 1.0 }
+            if (point.y < -1.0) { point.y = -1.0 }
+
+            return { x: (point.x * 2) - 1, y: (point.y * 2) - 1 }; 
+        } ;
 
         var apply_touch = function(control, area_name, point) { 
             $(control).css("background-image", "radial-gradient(at "+point.x+"% "+point.y+"%, #000, #FFF)"); 
