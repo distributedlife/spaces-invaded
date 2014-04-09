@@ -3,11 +3,14 @@ define(["lib/vector_math"], function(vector_math) {
 
 	return {
 		point: function(e) {
-            $("#e").text(e.layerX+","+e.layerX);
+            _.each(e.touches, function(touch) {
+                $("#e").text(e.clientX+","+e.clientY);
+            });
+            
             $("#t").text(e.target.clientWidth+"x"+e.target.clientHeight);
             return {
-                x: ~~ (e.layerX / e.target.clientWidth * 100),
-                y: ~~ (e.layerY / e.target.clientHeight * 100)
+                x: ~~ (e.clientX / e.target.clientWidth * 100),
+                y: ~~ (e.clientY / e.target.clientHeight * 100)
             };
         },
 
