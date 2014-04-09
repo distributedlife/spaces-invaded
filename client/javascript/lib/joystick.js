@@ -3,14 +3,18 @@ define(["lib/vector_math"], function(vector_math) {
 
 	return {
 		point: function(e) {
-            _.each(e.touches, function(touch) {
-                $("#e").text(e.clientX+","+e.clientY);
-            });
+            var x = e.touches[0].clientX - e.touches[0].target.offsetLeft;
+            var y = e.touches[0].clientY - e.touches[0].target.offsetTop;
+            // _.each(e.touches, function(touch) {
+                $("#e").text(x+","+y);
+            // });
+
+            // console.log(e);
             
             $("#t").text(e.target.clientWidth+"x"+e.target.clientHeight);
             return {
-                x: ~~ (e.clientX / e.target.clientWidth * 100),
-                y: ~~ (e.clientY / e.target.clientHeight * 100)
+                x: ~~ (x / e.target.clientWidth * 100),
+                y: ~~ (y / e.target.clientHeight * 100)
             };
         },
 
