@@ -1,6 +1,6 @@
 var config = require('../lib/config');
 
-module.exports = function(game_state, game_logic, input_bindings) {
+module.exports = function(game_state, game_logic, input_bindings, measure) {
   return {
   	prior_step: Date.now(),
 
@@ -20,7 +20,7 @@ module.exports = function(game_state, game_logic, input_bindings) {
 
     run: function() {
       this.step();
-      setTimeout(this.run.bind(this), 1000 / 60);
+      setTimeout(measure.distribution('server-loop', this.run.bind(this)).bind(measure), 1000 / 60);
     }
   };
 };

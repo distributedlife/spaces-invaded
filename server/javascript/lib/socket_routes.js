@@ -1,7 +1,7 @@
-var watchjs = require("watchjs");
-
-module.exports = function(io, game_state, user_input) {
+module.exports = function(io, game_state, user_input, watchjs, measure) {
 	var setup_playable_client = function(socket) {
+		measure.socket(socket);
+
 		socket.on('disconnect', function() { 
 			game_state.players -= 1; 
 			game_state.paused = true; 
@@ -12,12 +12,14 @@ module.exports = function(io, game_state, user_input) {
 		socket.on('resize', function(dimensions) { game_state.dimensions = dimensions });
 
 		socket.emit("game_state/setup", game_state);
-		watchjs.watch(game_state, function() { socket.volatile.emit("game_state/update", game_state) });
+		watchjs.measured_watch('game_state', game_state, function() { socket.volatile.emit("game_state/update", game_state) });
 		
 		game_state.players += 1;
 	}
 
 	var setup_controller = function(socket) {
+		measure.socket(socket);
+
 		socket.on('disconnect', function() { 
 			game_state.players -= 1; 
 			game_state.paused = true; 
@@ -30,10 +32,12 @@ module.exports = function(io, game_state, user_input) {
 	}
 
 	var setup_observer = function(socket) {
+		measure.socket(socket);
+		
 		socket.on('disconnect', function() { game_state.observers -= 1; });
 		//TODO: what happens when the observer screen resolution is different to the player screen resolution?
 		socket.emit("game_state/setup", game_state);
-		watchjs.watch(game_state, function() { socket.volatile.emit("game_state/update", game_state) });
+		watchjs.measured_watch('game_state', game_state, function() { socket.volatile.emit("game_state/update", game_state) });
 		
 		game_state.observers += 1;
 	}

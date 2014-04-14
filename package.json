@@ -16,7 +16,10 @@
     "wrench": "latest",
     "socket.io": "latest",
     "socket.io-client": "latest",
-    "watchjs": "latest"
+    "watchjs": "latest",
+    "morgan": "latest",
+    "microtime": "latest",
+    "body-parser": "latest"
   },
   "devDependencies": {
     "amdefine": "latest",

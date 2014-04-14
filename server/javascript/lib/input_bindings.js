@@ -1,7 +1,6 @@
-var watchjs = require("watchjs");
 var _ = require('underscore');
 
-module.exports = function(game_state, user_input, action_map) {
+module.exports = function(game_state, user_input, action_map, watchjs) {
 	var input_bindings = {
 		parse_keys_and_buttons: function(callback) {
 			_.each(user_input.raw_data.keys, function(key) {
