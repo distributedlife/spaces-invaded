@@ -1,7 +1,5 @@
-module.exports = function(io, game_state, user_input, watchjs, measure) {
+module.exports = function(io, game_state, user_input, watchjs) {
 	var setup_playable_client = function(socket) {
-		// measure.socket(socket);
-
 		socket.on('disconnect', function() { 
 			game_state.players -= 1; 
 			game_state.paused = true; 
@@ -11,24 +9,17 @@ module.exports = function(io, game_state, user_input, watchjs, measure) {
 		socket.on('unpause', function() { game_state.paused = false; });
 		socket.on('resize', function(dimensions) { game_state.dimensions = dimensions });
 
-		console.log(game_state.invaders[0].type);
+		console.log("MIKE: THAT SAME OBJECT NOW SHOWS MORE THINGS BY THE TIME WE GET HERE.")
+		console.log(game_state.invaders[0]);
+		console.log("MIKE: BUT TYPE AND OTHERS STILL DOESN'T SHOW UNLESS WE ARE EXPLICIT:"+game_state.invaders[0].type)
+		console.log("MIKE: THE TROUBLE IS THAT WHEN I GET HERE, THE SOCKET.EMIT ONLY SENDS WHAT IT CAN SEE. IT CANT SEE TYPE SO THE CLIENT DOESN'T GET IT. THIS USED TO WORK. I DON'T UNDERSTAND WHY IT NO LONGER DOES");
 		socket.emit("game_state/setup", game_state);
 
-		// var push_data_to_client = function() { 
-		// 	socket.volatile.emit("game_state/update", game_state) 
-		// 	setTimeout(push_data_to_client, 1000 / 60);
-		// };
-
-		// watchjs.measured_watch('game_state', game_state, socket.volatile.emit("game_state/update", game_state));
 		watchjs.watch(game_state, socket.volatile.emit("game_state/update", game_state));
 		game_state.players += 1;
-
-		// push_data_to_client();
 	}
 
 	var setup_controller = function(socket) {
-		// measure.socket(socket);
-
 		socket.on('disconnect', function() { 
 			game_state.players -= 1; 
 			game_state.paused = true; 
@@ -41,11 +32,10 @@ module.exports = function(io, game_state, user_input, watchjs, measure) {
 	}
 
 	var setup_observer = function(socket) {
-		// measure.socket(socket);
-		
 		socket.on('disconnect', function() { 
 			game_state.observers -= 1; 
 		});
+
 		//TODO: what happens when the observer screen resolution is different to the player screen resolution?
 		socket.emit("game_state/setup", game_state);
 		watchjs.watch(game_state, function() { socket.volatile.emit("game_state/update", game_state) });

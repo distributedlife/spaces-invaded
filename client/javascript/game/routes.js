@@ -1,8 +1,4 @@
-module.exports = function(app, game_state, measure) {
-	app.get("/metrics", function(req, res) { res.json(measure.results()); });
-
-	// measure.routes(app);
-
+module.exports = function(app, game_state) {
 	app.get('/', function(req, res) { res.render('index.haml'); });
 
 	app.get('/observer', function(req, res) { res.render('observer.haml'); });

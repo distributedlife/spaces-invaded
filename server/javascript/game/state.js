@@ -19,7 +19,9 @@ module.exports = function(entities) {
 
     for(var i = 0; i < 10; ++i) {
       var a = Object.create(entities.invader(bullets[i], invader_types.squid));
+      console.log("MIKE: WHEN I LOG THIS OBJECT, I SHOWS {}, BUT IT HAS 'THINGS'");
       console.log(a);
+      console.log("MIKE: SEE:"+a.type);
       invaders.push(a);
     }
     for(var i = 0; i < 20; ++i) {
