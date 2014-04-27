@@ -1,7 +1,7 @@
 define(["underscore", "ext/three", "lib/grid_view", "lib/any_old_display"], function(_, THREE, GridView, AnyOldDisplay) {
   "use strict";
 
-  return function(width, height) {
+  return function(element, width, height, options) {
     var setup_camera = function() {
       var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
       camera.position.z = 1;
@@ -28,6 +28,6 @@ define(["underscore", "ext/three", "lib/grid_view", "lib/any_old_display"], func
       return base_display;
     };
 
-    return add_orthographic_display_funcs(Object.create(AnyOldDisplay));
+    return add_orthographic_display_funcs(Object.create(AnyOldDisplay(element, width, height, options)));
   };
 });

@@ -20,7 +20,7 @@ module.exports = function(game_state, game_logic, input_bindings, measure) {
 
     run: function() {
       this.step();
-      setTimeout(measure.distribution('server-loop', this.run.bind(this)).bind(measure), 1000 / 60);
+      setTimeout(measure.buckets('server-loop', this.run.bind(this)).bind(measure), 1000 / 120);
     }
   };
 };

@@ -11,8 +11,10 @@ define(["lib/window", "lib/rendering_engine", "lib/dimensions"], function (windo
         config.display_config = config.display_config || {};
         config.display_config.controls = config.display_config.controls || [];
 
+        var display = new config.display(config.canvas, config.width, config.height, config.display_config);
+        display.connect_to_server();
+
         if (!config.webgl) {
-            var display = new config.display(config.canvas, config.width, config.height, config.display_config);
             return {
                 resize: function() {},
                 engine: {},
@@ -30,7 +32,7 @@ define(["lib/window", "lib/rendering_engine", "lib/dimensions"], function (windo
                     this.engine.resize(screen.width, screen.height);
                 },
                 engine: RenderingEngine(
-                    new config.display(config.canvas, config.width, config.height, config.display_config),
+                    display,
                     window.get_element_by_id(config.canvas),
                     config.width, 
                     config.height

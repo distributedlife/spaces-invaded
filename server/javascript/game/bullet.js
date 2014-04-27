@@ -1,16 +1,15 @@
 "use strict";
 
-var teams = require('./enums/teams');
 var bounding_box = require('../lib/bounding_box');
 
-module.exports = function() {
+module.exports = function(team) {
   return {
     x: 0,
     y: 0,
     width: 4,
     height: 20,
     velocity: 0,
-    team: teams.earth,
+    team: team,
     name: "bullet",
     active: false,
 
@@ -26,11 +25,11 @@ module.exports = function() {
     box: function() { return bounding_box(this.x, this.y, this.width, this.height); },
 
     collide: function(other_thing) {
-      if (other_thing.team === teams.invaders) {
+      if (other_thing.team !== this.team) {
         this.die();
       }
     },
 
     die: function() { this.active = false; }
-  }
+  };
 };

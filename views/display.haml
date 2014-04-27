@@ -7,8 +7,18 @@
     %script{'data-main': "/client/javascript/display.js", src: "/client/javascript/ext/require.js"}
     %script{src: "/client/javascript/config.js"}
   %body
-    .disconnected
-      %h1 No connection to server...plz waits.
-    .paused
-      %h1 PAUSED
+    .icons
+      .disconnected
+        %img{src: "/client/site/img/disconnected.png"}
+      .paused
+        %img{src: "/client/site/img/paused.png"}
+      .player-count
+        %p#player-count 0
+      .players
+        %img{src: "/client/site/img/players.png"}
+      .observer-count
+        %p#observer-count 0
+      .observers
+        %img{src: "/client/site/img/observers.png"}
+    #paused
     #canvas

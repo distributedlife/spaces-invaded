@@ -1,112 +1,75 @@
-define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash", "lib/keyboard_controller"],
-  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _, KeyboardController)
+define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash"],
+  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _)
   {
     "use strict";
 
     return function(element, width, height, options) {
-        var d = Object.create(OrthographicDisplay(width, height));
-        d.state = {};
+        var client = Object.create(OrthographicDisplay(element, width, height, options));
         var sound_manager = new SoundManager();
 
-        var get_tank = function() { return d.state.tank; }
-        var get_bullet = function() { return d.state.bullet; }
+        var the_tank = function(state) { return state.tank; };
+        var tank_bullet = function(state) {return state.bullet; };
+        var an_invader = function(state, i) { return state.invaders[i]; };
+        var all_invaders = function(state) { return state.invaders; };
+        var an_invader_bullet = function(state, i) { return state.invader_bullets[i]; };
+        var all_invader_bullets = function(state, i) { return state.invader_bullets; };
 
         var tank = null;
         var bullet = null;
+        var invader_bullets = [];
+        var invaders = [];
 
-        var init = function(width, height) {
-            var socket = io.connect('/desktop', {'force new connection': true});
+        client.setup_game = function() {
+            console.log(client.current_state.invaders[0]);
+            console.log(client.current_state.invaders[0].type);
+            tank = Object.create(sprite(client.value(the_tank), config.resolve_image('tank.png')));
+            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png'))); 
+            client.add_to_scene(tank.mesh, bullet.mesh);
 
-            if (window.document.hasFocus() && !options.observer) {
-                socket.emit('unpause');
-            }
+            _.each(client.value(all_invader_bullets), function(bullet) {
+                var bullet_sprite = Object.create(sprite(bullet, config.resolve_image('invader_bullet.png')));
 
-            socket.emit('resize', { width: width, height: height });
+                invader_bullets.push(bullet_sprite);
+                client.add_to_scene(bullet_sprite.mesh);
+            });
 
-            var setup = function(game_state) {
-                d.state = game_state
+            _.each(client.value(all_invaders), function(invader) {
+                var invader_sprite = Object.create(sprite(invader, config.resolve_image("invader_"+invader.type+".png")));
 
-                tank = Object.create(sprite(get_tank(), config.resolve_image('tank.png')));
-                bullet = Object.create(sprite(get_bullet(), config.resolve_image('tank_bullet.png'))); 
-                
-                d.add_to_scene(tank.mesh, bullet.mesh);
-            };
-
-            var update_from_server = function(game_state) {
-                d.state = game_state
-
-                tank.update_from_model(get_tank());
-                bullet.update_from_model(get_bullet());    
-
-                if (get_tank().active = false) {
-                    //TODO: implement game over man
-                }
-
-                if (d.state.paused) {  d.pause(); }
-                if (!d.state.paused) { d.resume(); }
-            };
-
-            socket.on('disconnect', function() { d.disconnected(); });
-            socket.on('connect', function() { d.connected(); });
-            socket.on('game_state/setup', setup);
-            socket.on('game_state/update', update_from_server);
-            socket.on('error', function(data) { throw Error(data); });
-
-            
-                 
-        // AudioEmitter(tank, bindings);
-        // var invaders = [];
-        // var i = 0;
-        // var invader_bullet, invader;
-        // for(i = 0; i < 10; ++i) {
-        //   invader_bullet = thing_factory.make_invader_bullet(sound_manager);
-        //   invader = thing_factory.make_squid_invader(invader_bullet.model, sound_manager);
-        //   invaders.push(invader.model);
-        //   d.add_to_scene_and_things(invader_bullet.model, invader_bullet.view);
-        //   d.add_to_scene_and_things(invader.model, invader.view);
-        // }
-        // for(i = 0; i < 20; ++i) {
-        //   invader_bullet = thing_factory.make_invader_bullet(sound_manager);
-        //   invader = thing_factory.make_bug_invader(invader_bullet.model, sound_manager);
-        //   invaders.push(invader.model);
-        //   d.add_to_scene_and_things(invader_bullet.model, invader_bullet.view);
-        //   d.add_to_scene_and_things(invader.model, invader.view);
-        // }
-        // for(i = 0; i < 20; ++i) {
-        //   invader_bullet = thing_factory.make_invader_bullet(sound_manager);
-        //   invader = thing_factory.make_skull_invader(invader_bullet.model, sound_manager);
-        //   invaders.push(invader.model);
-        //   d.add_to_scene_and_things(invader_bullet.model, invader_bullet.view);
-        //   d.add_to_scene_and_things(invader.model, invader.view);
-        // }
-
-        // var swarm_config = {
-        //   cols: 10,
-        //   row_pad: 40,
-        //   row_margin: 24,
-        //   col_pad: 60,
-        //   col_margin: 33,
-        //   left_extent: 0,
-        //   right_extent: width,
-        //   direction: 1
-        // };
-
-        // var swarm = thing_factory.make_swarm(invaders, swarm_config);
-        // swarm.model.on_event('die', d.level_completed);
-        // d.things.push(swarm.model);
-
-
-        // var soundtrack = new AudioEmitter(sound_manager, 'soundtrack', config.audio_path + 'soundtrack.mp3');
-        // soundtrack.volume = 30;
-        // soundtrack.play();
-
-            if (!options.controls.indexOf("keyboard") !== -1) {
-                KeyboardController(socket, element, width, height);
-            }
+                invaders.push(invader_sprite);
+                client.add_to_scene(invader_sprite.mesh);
+            });
         };
 
-        init(width, height);
+        client.update_game = function() {
+            if (client.changed(the_tank).active === false) {
+                //TODO: implement game over man
+            }
 
-        return d;
+            if (client.changed(the_tank)) { 
+                tank.update_from_model(client.value(the_tank));
+            }
+            if (client.changed(tank_bullet)) { 
+                bullet.update_from_model(client.value(tank_bullet)); 
+            }
+
+            var counter = 0;
+            _.each(client.value(all_invader_bullets), function(bullet) {
+                if (client.element_changed(an_invader_bullet, counter)) {
+                    invader_bullets[counter].update_from_model(bullet);
+                }
+                counter++;
+            }); 
+
+            counter = 0;
+            _.each(client.value(all_invaders), function(invader) {
+                if (client.element_changed(an_invader, counter)) {
+                    invaders[counter].update_from_model(invader);
+                }
+                counter++;
+            }); 
+        };
+
+        return client;
     };
 });

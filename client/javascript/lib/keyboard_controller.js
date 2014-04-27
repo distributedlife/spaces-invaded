@@ -138,6 +138,8 @@ define(["lib/window", "lodash"], function(window, _) {
 
                 $(window).on('blur', function() { socket.emit('pause'); }.bind(this));
                 $(window).on('focus', function() { socket.emit('unpause'); }.bind(this));
+                $(window).on('mousedown', function() { socket.emit('unpause'); }.bind(this));
+                $(window).on('mouseup', function() { socket.emit('unpause'); }.bind(this));
             },
 
             emit: function() {
