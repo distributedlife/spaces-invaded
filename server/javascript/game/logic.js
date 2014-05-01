@@ -7,7 +7,7 @@ module.exports = function(game_state) {
 
   return {
     all_the_things: function() {
-      return [game_state.bullet, game_state.tank].concat(game_state.invader_bullets).concat(game_state.invaders);
+      return [game_state.bullet, game_state.tank, game_state.swarm].concat(game_state.invader_bullets).concat(game_state.invaders);
     },
     
     update: function(dt) {
@@ -19,6 +19,7 @@ module.exports = function(game_state) {
       _.each(things_to_update, function(thing) { thing.update(dt); });
 
       this.check_for_bullets_off_screen(active_things);
+      this.check_for_swarm_at_edge_of_screen();
 
       var things_that_can_collide = _.reject(active_things, function(thing) { return thing.collide === undefined; });
       this.check_for_collisions(things_that_can_collide);
@@ -35,13 +36,35 @@ module.exports = function(game_state) {
       });
     },
 
+    is_off_screen: function(thing) {
+      if (thing.box().bottom() < 0) { return true; }
+      if (thing.box().top() > game_state.dimensions.height) { return true; }
+
+      return false;
+    },
+
     check_for_bullets_off_screen: function(active_things) {
       var bullets = _.filter(active_things, function(thing) { return thing.name === "bullet" || thing.name == "invader bullet"; });
 
       _.each(bullets, function(bullet) {
-        if (bullet.box().bottom() < 0) { bullet.die(); }
-        if (bullet.box().top() > game_state.dimensions.height) { bullet.die(); }
-      });
+        if (this.is_off_screen(bullet)) { 
+          bullet.die(); 
+        }
+      }.bind(this));
+    },
+
+    check_for_swarm_at_edge_of_screen: function() {
+      var swarm = game_state.swarm;
+
+      if (swarm.direction === 1) {
+        if (swarm.box().right() > game_state.dimensions.width) { 
+          swarm.invade(); 
+        }
+      } else {
+        if (swarm.box().left() < 0) { 
+          swarm.invade(); 
+        }
+      }
     },
 
     check_for_tank_at_screen_edge: function() {

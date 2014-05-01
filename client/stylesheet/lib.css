@@ -41,7 +41,8 @@
 .icons .players { position: fixed; }
 .icons .observer-count { position: fixed; }
 .icons .observers { position: fixed; }
-
+.icons .music-enabled { position: fixed; }
+.icons .sound-enabled { position: fixed; }
 
 #paused {
   background-color: rgba(128, 128, 128, 0.5);

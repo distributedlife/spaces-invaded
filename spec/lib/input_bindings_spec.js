@@ -36,7 +36,7 @@ describe("Input Bindings", function() {
 		})
 		
 		it("should call the 'no_event' on the 'model' bound as 'nothing'", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).handle_no_input();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).handle_no_input();
 			expect(game_state.model.no_event).toHaveBeenCalled();
 		});
 
@@ -46,7 +46,7 @@ describe("Input Bindings", function() {
 			});
 
 			it ("should do nothing", function() {
-				require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).handle_no_input();
+				require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).handle_no_input();
 				expect(game_state.model.no_event).not.toHaveBeenCalled();
 			});
 		});
@@ -58,12 +58,12 @@ describe("Input Bindings", function() {
 		})
 
 		it("should not call the 'no_event' on the 'model' bound as 'nothing'", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).handle_no_input();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).handle_no_input();
 			expect(game_state.model.no_event).not.toHaveBeenCalled();
 		});
 
 		it("should call any matching functions with a force of one", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).map_input_to_action();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).map_input_to_action();
 			expect(game_state.model.key_event).toHaveBeenCalledWith(1.0);
 		});
 	});
@@ -74,12 +74,12 @@ describe("Input Bindings", function() {
 		})
 
 		it("should not call the 'no_event' on the 'model' bound as 'nothing'", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).handle_no_input();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).handle_no_input();
 			expect(game_state.model.no_event).not.toHaveBeenCalled();
 		});
 
 		it("should call any matching functions with the touch coordinates", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).map_input_to_action();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).map_input_to_action();
 			expect(game_state.model.touch_event).toHaveBeenCalledWith(4, 5);
 		});
 	});
@@ -90,7 +90,7 @@ describe("Input Bindings", function() {
 		})
 
 		it("should call any matching functions with the touch coordinates", function() {
-			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map).map_input_to_action();
+			require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs).map_input_to_action();
 			expect(game_state.model.cursor_event).toHaveBeenCalledWith(6, 7);
 		});
 	});
@@ -101,7 +101,7 @@ describe("Input Bindings", function() {
 		})
 
 		it("should call 'handle_no_input'", function() {
-			var input_bindings = require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map);
+			var input_bindings = require('../../server/javascript/lib/input_bindings')(game_state, user_input, action_map, watchjs);
 			input_bindings.handle_no_input = jasmine.createSpy();
 
 			watchjs.callWatchers(user_input.raw_data, "keys");

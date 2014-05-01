@@ -1,5 +1,5 @@
-define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash"],
-  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _)
+define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", "zepto", "lib/sound_manager2", "lodash", 'lib/audio_emitter'],
+  function(io, Events, OrthographicDisplay, config, sprite, window, $, SoundManager, _, audio_emitter)
   {
     "use strict";
 
@@ -19,44 +19,63 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
         var invader_bullets = [];
         var invaders = [];
 
+        var tank_die = null;
+        var tank_bullet_fire = null;
+        var invader_bullets_fire = [];
+        var invader_bullets_miss = [];
+        var invaders_die = [];
+
+        var is_inactive = function(state) { return state.active === false; };
+        var is_active = function(state) { return state.active === true; };
+
         client.setup_game = function() {
-            console.log(client.current_state.invaders[0]);
-            console.log(client.current_state.invaders[0].type);
             tank = Object.create(sprite(client.value(the_tank), config.resolve_image('tank.png')));
-            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png'))); 
+            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png')));
             client.add_to_scene(tank.mesh, bullet.mesh);
+
+            tank_die = Object.create(audio_emitter(sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
+            tank_bullet_fire = Object.create(audio_emitter(sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
 
             _.each(client.value(all_invader_bullets), function(bullet) {
                 var bullet_sprite = Object.create(sprite(bullet, config.resolve_image('invader_bullet.png')));
+                var bullet_fire = Object.create(audio_emitter(sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 1}, is_active));
+                var bullet_miss = Object.create(audio_emitter(sound_manager, config.resolve_audio('invader_bullet_miss.wav'), {}, is_inactive)); 
 
                 invader_bullets.push(bullet_sprite);
+                invader_bullets_fire.push(bullet_fire);
+                invader_bullets_miss.push(bullet_miss);
                 client.add_to_scene(bullet_sprite.mesh);
             });
 
             _.each(client.value(all_invaders), function(invader) {
                 var invader_sprite = Object.create(sprite(invader, config.resolve_image("invader_"+invader.type+".png")));
+                var invader_audio = Object.create(audio_emitter(sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
 
                 invaders.push(invader_sprite);
+                invaders_die.push(invader_audio);
                 client.add_to_scene(invader_sprite.mesh);
             });
+
+            var soundtrack = Object.create(audio_emitter(sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 50}));
+            soundtrack.play();
         };
 
         client.update_game = function() {
-            if (client.changed(the_tank).active === false) {
-                //TODO: implement game over man
-            }
-
             if (client.changed(the_tank)) { 
                 tank.update_from_model(client.value(the_tank));
+                tank_die.update_from_model(client.value(the_tank));
             }
             if (client.changed(tank_bullet)) { 
                 bullet.update_from_model(client.value(tank_bullet)); 
+                tank_bullet_fire.update_from_model(client.value(tank_bullet));
             }
 
             var counter = 0;
             _.each(client.value(all_invader_bullets), function(bullet) {
                 if (client.element_changed(an_invader_bullet, counter)) {
                     invader_bullets[counter].update_from_model(bullet);
+                    invader_bullets_fire[counter].update_from_model(bullet);
+                    invader_bullets_miss[counter].update_from_model(bullet);
                 }
                 counter++;
             }); 
@@ -65,9 +84,14 @@ define(["socket.io", "events", "lib/orthographic_display", "lib/config", "lib/sp
             _.each(client.value(all_invaders), function(invader) {
                 if (client.element_changed(an_invader, counter)) {
                     invaders[counter].update_from_model(invader);
+                    invaders_die[counter].update_from_model(invader);
                 }
                 counter++;
             }); 
+
+            if (client.value(the_tank).active === false) {
+                //TODO: implement game over man
+            }
         };
 
         return client;

@@ -7,14 +7,11 @@ var invader_types = require('./enums/invaders');
 
 module.exports = function(invaders) {
 	var min = function(array) { return Math.min.apply(Math, array); };
-
     var max = function(array) { return Math.max.apply(Math, array); };
 
     var active_invaders = function(invaders) { return _.filter(invaders, function(invader) { return invader.active; }); }
-    var invader_left_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box.left(); }); };
-    var invader_right_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box.right(); }); };
-
-    var collect_invaders_by_type = function(invaders, type) { return _.where(invaders, {type: type}); };
+    var invader_left_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box().left(); }); };
+    var invader_right_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box().right(); }); };
 
 	var swarm = {
 		name: "swarm",
@@ -29,11 +26,15 @@ module.exports = function(invaders) {
 		left_extent: 0,
 		right_extent: 500,
 
-		box: function() { 
-			var min_x = min(collect_invader_left_x_positions(active_invaders(invaders)));
-			var max_x = max(collect_invader_right_x_positions(active_invaders(invaders)));
+		box: function() {
+			var active = active_invaders(invaders);
 
-			return bounding_box(min_x, this.y, max_x, this.height); 
+			var min_x = min(invader_left_x_positions(active));
+			var max_x = max(invader_right_x_positions(active));
+
+			var width = max_x - min_x;
+
+			return bounding_box(max_x - (width / 2), this.y, width, this.height); 
 		},
 
 		die: function() { this.active = false; },
@@ -41,9 +42,7 @@ module.exports = function(invaders) {
 		update: function(delta) {
 			if (active_invaders.length === 0) {
 				this.die();
-				return;
 			}
-
 		},
 
 		position_invader: function(invader, i) {
@@ -63,6 +62,14 @@ module.exports = function(invaders) {
 			_.each(squids, function(invader, i) { this.position_invader(invader, i); }.bind(this));
 			_.each(bugs, function(invader, i) { this.position_invader(invader, i + squids.length); }.bind(this));
 			_.each(skulls, function(invader, i) { this.position_invader(invader, i + squids.length + bugs.length); }.bind(this));
+		},
+
+		reverse_direction: function() { this.direction *= -1; },
+
+		invade: function() {
+			_.each(invaders, function(invader) {  invader.invade();  });
+
+			this.reverse_direction();
 		}
 	};
 
@@ -70,48 +77,3 @@ module.exports = function(invaders) {
 
 	return swarm;
 };
-
-//   return function(invaders, swarm_config) {
-  
-
-//     _this.is_heading = function(direction) {
-//       return (_this.direction === direction);
-//     };
-
-//     _this.reverse_direction = function() {
-//       _this.direction = (_this.direction === enums.Directions.Right) ? enums.Directions.Left : enums.Directions.Right;
-//     };
-
-//     _this.is_hitting_left_edge = function() {
-//       return (_this.is_heading(enums.Directions.Left) && (_this.box.left() <= swarm_config.left_extent));
-//     };
-
-//     _this.is_hitting_right_edge = function() {
-//       return (_this.is_heading(enums.Directions.Right) && (_this.box.right() >= swarm_config.right_extent));
-//     };
-
-//     _this.calculate_overlap_with_view_edge = function() {
-//       if (_this.is_heading(enums.Directions.Right)) {
-//         return _this.box.right() - swarm_config.right_extent;
-//       }
-//       if (_this.is_heading(enums.Directions.Left)) {
-//         return _this.box.left() + swarm_config.left_extent;
-//       }
-//     };
-
-//     _this.update = function(delta) {
-//       if(_this.is_hitting_right_edge() || _this.is_hitting_left_edge()) {
-//         var overlap = _this.calculate_overlap_with_view_edge();
-//         _this.invade(overlap);
-//       }
-//     };
-
-//     _this.invade = function(amount_to_shift) {
-//       invaders.forEach(function(invader) {
-//         invader.invade();
-//         invader.shift(amount_to_shift, 0, 0);
-//       });
-
-//       _this.reverse_direction();
-//     };
-//   };

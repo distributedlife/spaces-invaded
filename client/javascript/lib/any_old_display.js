@@ -7,9 +7,14 @@ define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
 	    var observer_count = function(state) { return state.observers; };
 
 		return {
+	        //TODO:mix in these behaviours
 	        prior_state: null,
 	        current_state: null,
 
+	        update_state: function(new_state) {
+	        	this.prior_state = this.current_state;
+	            this.current_state = new_state;
+	        },
 	        changed: function(f) { 
 	        	if (this.prior_state === null) { return true; }
 
@@ -43,15 +48,13 @@ define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
 	        update_game: function() { console.log ("implement me"); },
 
 			setup: function(state) {
-	            this.prior_state = this.current_state;
-	            this.current_state = state;
+	            this.update_state(state);
 
 	            this.setup_game();
 	        },
 
 	        update: function(state) {
-	            this.prior_state = this.current_state;
-	            this.current_state = state;
+	            this.update_state(state);
 
 	            if (this.changed(is_paused) && this.value(is_paused) === true) { this.pause(); }
 	            if (this.changed(is_paused) && this.value(is_paused) === false) { this.resume(); }

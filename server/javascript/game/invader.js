@@ -26,7 +26,7 @@ module.exports = function(bullet, type) {
     type: type,
     direction: 1,
     invade_drop: 10,
-    invader_speedup: 1.075,
+    invade_speedup: 1.075,
     shoot_countdown: Math.random() * number_of_seconds_between_shots,
     
     spawn: function(cx, cy, direction) {
@@ -66,12 +66,7 @@ module.exports = function(bullet, type) {
     invade: function() {
       this.y += this.invade_drop;
       this.direction *= -1;
-      this.velocity = this.velocity * this.invade_speedup;
-    },
-
-    shift: function(horizontal, vertical) {
-      this.x += horizontal;
-      this.y += vertical;
+      this.velocity *= this.invade_speedup;
     }
   };
 };
