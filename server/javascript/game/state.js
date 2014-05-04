@@ -18,8 +18,7 @@ module.exports = function(entities) {
     var invaders = [];
 
     for(var i = 0; i < 10; ++i) {
-      var a = new entities.invader(bullets[i], invader_types.squid);
-      invaders.push(a);
+      invaders.push(new entities.invader(bullets[i], invader_types.squid));
     }
     for(var i = 0; i < 20; ++i) {
       invaders.push(new entities.invader(bullets[10 + i], invader_types.bug));

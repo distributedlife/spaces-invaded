@@ -1,4 +1,4 @@
-define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
+define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes"], function($, KeyboardController, SoundManager, _, tracks_state_changes) {
 	"use strict";
 
 	return function(element, width, height, options) {
@@ -6,30 +6,19 @@ define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
 	    var player_count = function(state) { return state.players; };
 	    var observer_count = function(state) { return state.observers; };
 
-		return {
-	        //TODO:mix in these behaviours
-	        prior_state: null,
-	        current_state: null,
+		var any_old_display = {};
+		_.extend(any_old_display, tracks_state_changes);
+		_.extend(any_old_display, {
+        	sound_manager: new SoundManager(),
 
-	        update_state: function(new_state) {
-	        	this.prior_state = this.current_state;
-	            this.current_state = new_state;
+			pause: function() { 
+				$('.paused').show(); $('#paused').show();
+				this.sound_manager.pauseAll();
+			},
+	        resume: function() { 
+	        	$('.paused').hide(); $('#paused').hide(); 
+	        	this.sound_manager.resumeAll();
 	        },
-	        changed: function(f) { 
-	        	if (this.prior_state === null) { return true; }
-
-	        	return f(this.prior_state) !== f(this.current_state); 
-	        },
-	        element_changed: function(f, i) { 
-	        	if (this.prior_state === null) { return true; }
-
-	        	return f(this.prior_state, i) !== f(this.current_state, i); 
-	        },
-	        value: function(f) {  return f(this.current_state);  },
-	        element_value: function(f, i) { return f(this.current_state, i); },
-
-			pause: function() { $('.paused').show(); $('#paused').show();},
-	        resume: function() { $('.paused').hide(); $('#paused').hide(); },
 
 	        disconnected: function() { $('.disconnected').show(); },
 	        connected: function() { $('.disconnected').hide(); },
@@ -49,7 +38,6 @@ define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
 
 			setup: function(state) {
 	            this.update_state(state);
-
 	            this.setup_game();
 	        },
 
@@ -81,6 +69,8 @@ define(["zepto", "lib/keyboard_controller"], function($, KeyboardController) {
 	                KeyboardController(socket, element, width, height);
 	            }
 	        }
-	    };
+	    });
+
+		return any_old_display;
 	};
 });

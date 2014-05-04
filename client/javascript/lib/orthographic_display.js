@@ -2,6 +2,7 @@ define(["underscore", "ext/three", "lib/grid_view", "lib/any_old_display"], func
   "use strict";
 
   return function(element, width, height, options) {
+    //TODO: implement as extend
     var setup_camera = function() {
       var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
       camera.position.z = 1;

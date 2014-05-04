@@ -1,9 +1,11 @@
 "use strict";
 
 var bounding_box = require('../lib/bounding_box');
+var unique = require('../lib/unique');
 
 module.exports = function(team) {
   return {
+    id: unique.id(),
     x: 0,
     y: 0,
     width: 4,

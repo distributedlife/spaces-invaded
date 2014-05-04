@@ -4,9 +4,11 @@ var config = require('../lib/config');
 var _ = require('underscore');
 var bounding_box = require('../lib/bounding_box');
 var teams = require('./enums/teams');
+var unique = require('../lib/unique');
 
 module.exports = function(bullet) {
   return {
+    id: unique.id(),
     width: 66,
     height: 42,
     x: 400,

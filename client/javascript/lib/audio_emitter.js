@@ -1,4 +1,4 @@
-define(["lib/unique"], function(unique) {
+define(["lib/unique", "lib/tracks_state_changes"], function(unique, tracks_state_changes) {
   "use strict";
 
   return function(sound_manager, filename, additional_options, f) {
@@ -9,23 +9,12 @@ define(["lib/unique"], function(unique) {
       return additional_options;
     };
 
-    var audio_emitter = {
+    var audio_emitter = {};
+    _.extend(audio_emitter, tracks_state_changes);
+    _.extend(audio_emitter, {
+      
       sound: sound_manager.createSound({ id: unique.id(), url: filename }),
       options: configure_options(),
-
-      //TODO: mix in behaviour
-      prior_state: null,
-      current_state: null,
-      update_state: function(new_state) {
-        this.prior_state = this.current_state;
-        this.current_state = new_state;
-      },
-      changed_strict: function(f) { 
-        if (this.prior_state === null) { return false; }
-
-        return f(this.prior_state) !== f(this.current_state); 
-      },
-      is: function(f) { return f(this.current_state) === true; },
 
       update_from_model: function(new_state) {
         this.update_state(new_state)
@@ -44,7 +33,7 @@ define(["lib/unique"], function(unique) {
 
       play: function() { this.sound.play(this.options); },
       stop: function() { this.sound.stop(); }
-    };
+    });
     
     return audio_emitter;
   };

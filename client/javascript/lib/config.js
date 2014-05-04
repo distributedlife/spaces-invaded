@@ -5,7 +5,9 @@ define(function() {
     swf_path: "/client/swf/",
     // metric_server: "ws://localhost:1080/1.0/event/put";
 
-    global_volume: 0.0,
+    global_volume: 1.0,
+    music_enabled: true,
+    sound_enabled: true,
     wireframe: false,
 
     grid: {

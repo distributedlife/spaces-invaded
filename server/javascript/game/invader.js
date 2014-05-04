@@ -4,6 +4,7 @@ var config = require('../lib/config');
 var _ = require('underscore');
 var bounding_box = require('../lib/bounding_box');
 var team = require('./enums/teams');
+var unique = require('../lib/unique');
 
 module.exports = function(bullet, type) {
   var dimensions = {
@@ -15,6 +16,7 @@ module.exports = function(bullet, type) {
   var number_of_seconds_between_shots = 20;
 
   return {
+    id: unique.id(),
     width: dimensions[type].width,
     height: dimensions[type].height,
     x: 400,
