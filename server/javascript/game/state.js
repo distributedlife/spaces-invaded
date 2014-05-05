@@ -42,9 +42,6 @@ module.exports = function(entities) {
     players: 0,
     observers: 0,
     paused: true,
-    dimensions: {
-      width: 1000,
-      height: 500
-    }
+    dimensions: { width: 1000, height: 500 }
   };
 };
