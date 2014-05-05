@@ -1,15 +1,20 @@
 define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes"], function($, KeyboardController, SoundManager, _, tracks_state_changes) {
 	"use strict";
 
-	return function(element, options) {
+	return function(element, width, height, options) {
 		var is_paused = function(state) { return state.paused; };
 	    var player_count = function(state) { return state.players; };
 	    var observer_count = function(state) { return state.observers; };
+	    var game_dimensions = function(state) { return state.dimensions; };
 
 		var client = {};
 		_.extend(client, tracks_state_changes);
 		_.extend(client, {
         	sound_manager: new SoundManager(),
+        	width: width,
+        	height: height,
+
+        	animate: function() {},
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
@@ -41,8 +46,19 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            this.setup_game();
 	        },
 
+	        resize: function(width, height) {
+	        	this.width = width;
+	        	this.height = height;
+	        },
+
+	        dimensions: function(width, height) {
+	        	return {width: width, height: height};
+	        },
+
 	        update: function(state) {
 	            this.update_state(state);
+
+	            if (this.changed(game_dimensions)) { this.resize(this.width, this.height); }
 
 	            if (this.changed(is_paused) && this.value(is_paused) === true) { this.pause(); }
 	            if (this.changed(is_paused) && this.value(is_paused) === false) { this.resume(); }
@@ -55,7 +71,6 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 
 	        connect_to_server: function() {
 	            var socket = io.connect('/desktop');
-	            socket.emit('resize', { width: width, height: height });
 
 	            if (window.document.hasFocus() && !options.observer) { socket.emit('unpause'); }
 	            

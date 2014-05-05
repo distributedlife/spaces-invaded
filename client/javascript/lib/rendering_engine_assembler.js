@@ -33,7 +33,6 @@ define(["lib/window", "lib/rendering_engine", "lib/dimensions"], function (windo
                 },
                 engine: RenderingEngine(
                     display,
-                    window.get_element_by_id(config.canvas),
                     config.width, 
                     config.height
                 ),
