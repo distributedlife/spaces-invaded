@@ -43,8 +43,8 @@ module.exports = function(entities) {
     observers: 0,
     paused: true,
     dimensions: {
-      width: 0,
-      height: 0
+      width: 1000,
+      height: 500
     }
   };
 };

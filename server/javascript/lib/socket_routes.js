@@ -15,7 +15,7 @@ module.exports = function(io, game_state, user_input, watchjs) {
 		socket.on('input', function(input_data) { user_input.raw_data = input_data; });
 		socket.on('pause', function() { game_state.paused = true; });
 		socket.on('unpause', function() { game_state.paused = false; });
-		socket.on('resize', function(dimensions) { game_state.dimensions = dimensions });
+		// socket.on('resize', function(dimensions) { game_state.dimensions = dimensions });
 
 		socket.emit("game_state/setup", game_state);
 
@@ -41,7 +41,6 @@ module.exports = function(io, game_state, user_input, watchjs) {
 			game_state.observers -= 1; 
 		});
 
-		//TODO: what happens when the observer screen resolution is different to the player screen resolution?
 		socket.emit("game_state/setup", game_state);
 		
 		start_update_client_loop(socket);

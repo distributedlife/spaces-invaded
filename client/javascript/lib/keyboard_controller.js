@@ -1,7 +1,7 @@
 define(["lib/window", "lodash"], function(window, _) {
     "use strict";
 
-    return function(socket, element, width, height) {
+    return function(socket, element) {
         var controller = {
             last_sent: {},
             input_data: {

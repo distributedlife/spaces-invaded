@@ -19,8 +19,6 @@ module.exports = function(bullet) {
     name: "tank",
     to_move: 0,
     
-    spawn: function() {this.active = true;},
-    
     die: function() {
       if (config.nodamage) { return; }
       this.active = false;
@@ -54,6 +52,7 @@ module.exports = function(bullet) {
     update: function(delta) { this.move(delta); },
     
     shoot: function() {
+      if (!this.active) { return; }
       if (bullet.active) { return; }
 
       bullet.shoot(-200, this.x, this.y);

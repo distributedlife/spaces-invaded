@@ -16,15 +16,15 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display"], function
       return scene;
     };
 
-    var display = Object.create(AnyOldDisplay(element, width, height, options)) ;
+    var display = Object.create(AnyOldDisplay(element, options)) ;
     _.extend(display, {
       camera: setup_camera(),
       scene: create_a_scene(),
 
-      add_to_scene: function() { _.each(arguments, function(mesh) { this.scene.add(mesh); }.bind(this)); },
+      add_to_scene: function() { _.each(arguments, function(mesh) { display.scene.add(mesh); }.bind(display)); },
       resize: function(width, height) {
-        this.camera.aspect = width / height;
-        this.camera.updateProjectionMatrix();
+        display.camera.aspect = width / height;
+        display.camera.updateProjectionMatrix();
       }
     });    
 

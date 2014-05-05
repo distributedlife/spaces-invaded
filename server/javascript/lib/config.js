@@ -1,5 +1,5 @@
 module.exports = {
-  nodamage: true,
+  nodamage: false,
   measure: false,
   global_time_dilation: 1
 };

@@ -27,6 +27,16 @@ define(['ext/soundmanager2-nodebug-jsmin', 'lib/config'], function (unused, conf
       options.volume = options.volume * config.global_volume;
     };
 
+    soundmanager.disable_sound = function() {
+      soundmanager.mute();
+      soundmanager.volume(0);
+    };
+
+    soundmanager.enable_sound = function() {
+      soundmanager.unmute();
+      soundmanager.volume(100);
+    }
+
     return soundmanager;
   };
 });

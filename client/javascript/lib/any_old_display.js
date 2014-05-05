@@ -1,23 +1,23 @@
 define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes"], function($, KeyboardController, SoundManager, _, tracks_state_changes) {
 	"use strict";
 
-	return function(element, width, height, options) {
+	return function(element, options) {
 		var is_paused = function(state) { return state.paused; };
 	    var player_count = function(state) { return state.players; };
 	    var observer_count = function(state) { return state.observers; };
 
-		var any_old_display = {};
-		_.extend(any_old_display, tracks_state_changes);
-		_.extend(any_old_display, {
+		var client = {};
+		_.extend(client, tracks_state_changes);
+		_.extend(client, {
         	sound_manager: new SoundManager(),
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
-				this.sound_manager.pauseAll();
+				client.sound_manager.pauseAll();
 			},
 	        resume: function() { 
 	        	$('.paused').hide(); $('#paused').hide(); 
-	        	this.sound_manager.resumeAll();
+	        	client.sound_manager.resumeAll();
 	        },
 
 	        disconnected: function() { $('.disconnected').show(); },
@@ -66,11 +66,11 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            socket.on('error', function(data) { throw Error(data); });
 
 	            if (!options.controls.indexOf("keyboard") !== -1) {
-	                KeyboardController(socket, element, width, height);
+	                KeyboardController(socket, element);
 	            }
 	        }
 	    });
 
-		return any_old_display;
+		return client;
 	};
 });
