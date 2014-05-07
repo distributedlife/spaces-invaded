@@ -13,6 +13,7 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
 
         var the_width = function(state) { return state.dimensions.width; };
         var the_duration = function(state) { return state.duration; };
+        var misses = function(state) { return state.misses; };
 
         var tank = null;
         var bullet = null;
@@ -106,7 +107,7 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                     //TODO: implement game over man
                 }
 
-                client.calculate_score(client.value(all_invaders), client.value(the_duration));
+                client.calculate_score(client.value(all_invaders), client.value(the_duration), client.value(misses));
                 if (client.score_changed) {
                     scoreText.update_text(client.score, client.scene);    
                 }

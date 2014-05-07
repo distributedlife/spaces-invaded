@@ -49,6 +49,10 @@ module.exports = function(game_state) {
       _.each(bullets, function(bullet) {
         if (this.is_off_screen(bullet)) { 
           bullet.die(); 
+
+          if (bullet.name === "bullet") {
+            game_state.misses += 1;
+          }
         }
       }.bind(this));
     },

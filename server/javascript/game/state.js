@@ -35,6 +35,7 @@ module.exports = function(entities) {
 
   return {
     bullet: tank_bullet,
+    misses: 0,
     tank: new entities.tank(tank_bullet),
     invader_bullets: invader_bullets,
     invaders: invaders,
