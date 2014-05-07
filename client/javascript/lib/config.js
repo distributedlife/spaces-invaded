@@ -4,7 +4,7 @@ define(function() {
     audio_path: "/client/audio/",
     swf_path: "/client/swf/",
 
-    global_volume: 1.0,
+    global_volume: 0.0,
     music_enabled: true,
     sound_enabled: true,
     wireframe: false,

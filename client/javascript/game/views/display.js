@@ -1,5 +1,5 @@
-define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 'game/score'],
-  function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, score)
+define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 'game/score', 'lib/orthographic_text', 'font/helvetiker_regular'],
+  function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, score, orthographic_text, helvetiker_regular)
   {
     "use strict";
 
@@ -11,10 +11,13 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
         var an_invader_bullet = function(state, i) { return state.invader_bullets[i]; };
         var all_invader_bullets = function(state, i) { return state.invader_bullets; };
 
+        var the_width = function(state) { return state.dimensions.width; };
+
         var tank = null;
         var bullet = null;
         var invader_bullets = {};
         var invaders = {};
+        var scoreText = {};
 
         var tank_die = null;
         var tank_bullet_fire = null;
@@ -29,6 +32,10 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                 tank = Object.create(sprite(client.value(the_tank), config.resolve_image('tank.png')));
                 bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png')));
                 client.add_to_scene(tank.mesh, bullet.mesh);
+
+                scoreText = Object.create(orthographic_text(client.score, "right", "top", {size: 20}));
+                scoreText.update_from_model({x: client.value(the_width) - 10, y: 0});
+                client.add_to_scene(scoreText.mesh);
 
                 tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
                 tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
@@ -96,7 +103,11 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
 
                 if (client.value(the_tank).active === false) {
                     //TODO: implement game over man
-                    client.calculate_score(client.value(all_invaders));
+                }
+
+                client.calculate_score(client.value(all_invaders));
+                if (client.score_changed) {
+                    scoreText.update_text(client.score, client.scene);    
                 }
             }
         });
