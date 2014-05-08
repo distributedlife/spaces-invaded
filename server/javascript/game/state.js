@@ -40,11 +40,5 @@ module.exports = function(entities) {
     invader_bullets: invader_bullets,
     invaders: invaders,
     swarm: new entities.swarm(invaders),
-    players: 0,
-    observers: 0,
-    paused: true,
-    started: Date.now(),
-    duration: 0,
-    dimensions: { width: 1000, height: 500 }
   };
 };
