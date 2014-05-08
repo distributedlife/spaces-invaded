@@ -1,10 +1,18 @@
-define(["ext/three", "lib/config"], function(THREE, config) {
+define(["ext/three", "lib/config",  "shader!vertex/basic.glsl", "shader!fragment/decal.glsl"], function(THREE, config, vShader, fShader) {
   "use strict";
   
   return function(model, texture_filename) {
     var geometry = new THREE.PlaneGeometry(model.width, model.height);
-    var texture = THREE.ImageUtils.loadTexture(texture_filename);
-    var material = new THREE.MeshBasicMaterial({map:texture, transparent: true, wireframe: config.wireframe});
+    var decal = THREE.ImageUtils.loadTexture(texture_filename);
+    
+    var material = new THREE.ShaderMaterial({ 
+      uniforms: {
+        decal: {type: 't', value: decal}
+      },
+      vertexShader: vShader.value, 
+      fragmentShader: fShader.value, transparent: true 
+    });
+    
     var mesh = new THREE.Mesh(geometry, material)
     mesh.rotation.x = -90;
 

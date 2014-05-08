@@ -6,7 +6,9 @@ require.config({
       bacon: "npm/bacon",
       zepto: "ext/zepto.min",
       jquery: "ext/zepto.min",
-      lodash: "ext/lodash.min"
+      lodash: "ext/lodash.min",
+      text: 'ext/require-text',
+      shader: 'ext/require-shader'
     },
     shim: {
       "ext/three": {

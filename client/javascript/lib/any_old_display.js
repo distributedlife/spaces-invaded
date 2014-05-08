@@ -44,6 +44,10 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 			setup: function(state) {
 	            this.update_state(state);
 	            this.setup_game();
+
+	            if (this.value(is_paused) === true) {
+	            	client.sound_manager.pauseAll();
+	            }
 	        },
 
 	        resize: function(width, height) {
