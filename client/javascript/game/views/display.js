@@ -31,6 +31,16 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
         _.extend(client, score);
         _.extend(client, {
             setup_game: function() {
+                if (tank !== null) { client.remove_from_scene(tank.mesh); }
+                if (bullet !== null) { client.remove_from_scene(bullet.mesh); }
+                if (scoreText !== null) { client.remove_from_scene(scoreText.mesh); }
+                _.each(invader_bullets, function(bullet) {
+                    if (bullet !== null) { client.remove_from_scene(bullet.sprite.mesh); }
+                });
+                _.each(invaders, function(invader) {
+                    if (invader !== null) { client.remove_from_scene(invader.sprite.mesh); }
+                });
+
                 tank = Object.create(sprite(client.value(the_tank), config.resolve_image('tank.png')));
                 bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png')));
                 client.add_to_scene(tank.mesh, bullet.mesh);

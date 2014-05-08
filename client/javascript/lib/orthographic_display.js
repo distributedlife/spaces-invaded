@@ -43,6 +43,9 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
       add_to_scene: function() { 
         _.each(arguments, function(mesh) { display.scene.add(mesh); }.bind(display)); 
       },
+      remove_from_scene: function() {
+        _.each(arguments, function(mesh) { display.scene.remove(mesh); }.bind(display));
+      },
       animate: function() { 
         display.scene_renderer.animate(display.scene, display.camera); 
       },

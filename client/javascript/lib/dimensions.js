@@ -22,11 +22,13 @@ define(["lib/window"], function(window) {
                 height = window.innerHeight;
             }
 
-            $(".paused").css("top", position(1)-icon_top()+"px").css("right", "0");
-            $(".players").css("top", position(2)-icon_top()+"px").css("right", "0");
-            $(".player-count").css("top", position(3)-text_top()+"px").css("right", "0");
-            $(".observers").css("top", position(4)-icon_top()+"px").css("right", "0");
-            $(".observer-count").css("top", position(5)-text_top()+"px").css("right", "0");
+            var pos = 0;
+            $(".disconnected").css("top", position(pos++)-icon_top()+"px").css("right", "0");
+            $(".paused").css("top", position(pos++)-icon_top()+"px").css("right", "0");
+            $(".players").css("top", position(pos++)-icon_top()+"px").css("right", "0");
+            $(".player-count").css("top", position(pos++)-text_top()+"px").css("right", "0");
+            $(".observers").css("top", position(pos++)-icon_top()+"px").css("right", "0");
+            $(".observer-count").css("top", position(pos++)-text_top()+"px").css("right", "0");
         } else {
             if (ratioHeight + min_margin + min_margin > window.innerHeight) {
                 width = ratioWidth;
@@ -36,11 +38,13 @@ define(["lib/window"], function(window) {
                 width = window.innerWidth;
             }
 
-            $(".paused").css("right", position(1)+"px").css("top", icon_top()+"px");
-            $(".players").css("right", position(2)+"px").css("top", icon_top()+"px");
-            $(".player-count").css("right", position(3)+"px").css("top", text_top()+"px");
-            $(".observers").css("right", position(4)+"px").css("top", icon_top()+"px");
-            $(".observer-count").css("right", position(5)+"px").css("top", text_top()+"px");
+            var pos = 0;
+            $(".disconnected").css("right", position(pos++)+"px").css("top", icon_top()+"px");
+            $(".paused").css("right", position(pos++)+"px").css("top", icon_top()+"px");
+            $(".players").css("right", position(pos++)+"px").css("top", icon_top()+"px");
+            $(".player-count").css("right", position(pos++)+"px").css("top", text_top()+"px");
+            $(".observers").css("right", position(pos++)+"px").css("top", icon_top()+"px");
+            $(".observer-count").css("right", position(pos++)+"px").css("top", text_top()+"px");
         }
 
         var margin = ~~(window.innerHeight - height)/2;
