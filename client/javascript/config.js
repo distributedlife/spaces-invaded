@@ -50,6 +50,12 @@ require.config({
           "use strict";
           return this.SoundManager;
         }
+      },
+      'ext/screenfull': {
+        init: function() {
+          "use strict";
+          return this.screenfull;
+        }
       }
     }
 });

@@ -1,4 +1,4 @@
-define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes"], function($, KeyboardController, SoundManager, _, tracks_state_changes) {
+define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes", "ext/screenfull"], function($, KeyboardController, SoundManager, _, tracks_state_changes, screenfull) {
 	"use strict";
 
 	return function(element, width, height, options) {
@@ -89,6 +89,8 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            }
 	        }
 	    });
+
+		$(".fullscreen").on('click', function() { if (screenfull.enabled) { screenfull.toggle(); } });
 
 		return client;
 	};

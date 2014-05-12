@@ -4,21 +4,26 @@
     %meta{charset: "UTF-8"}
     %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/lib.css"}
     %link{rel: "stylesheet", type: "text/css", href: "/client/stylesheet/game.css"}
-    %script{'data-main': "/client/javascript/display.js", src: "/client/javascript/ext/require.js"}
+    %meta#level{name: "data", 'data-level': level}
+    :javascript
+      var level = document.querySelector('#level').dataset.level
+    %script{'data-main': "/client/javascript/primary.js", src: "/client/javascript/ext/require.js"}
     %script{src: "/client/javascript/config.js"}
   %body
     .icons
-      .disconnected
+      .icon.fullscreen
+        %img{src: "/client/site/img/fullscreen.png"}
+      .icon.disconnected
         %img{src: "/client/site/img/disconnected.png"}
-      .paused
+      .icon.paused
         %img{src: "/client/site/img/paused.png"}
-      .player-count
+      .icon.player-count
         %p#player-count 0
-      .players
+      .icon.players
         %img{src: "/client/site/img/players.png"}
-      .observer-count
+      .icon.observer-count
         %p#observer-count 0
-      .observers
+      .icon.observers
         %img{src: "/client/site/img/observers.png"}
     #paused
     #canvas

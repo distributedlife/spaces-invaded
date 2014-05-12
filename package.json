@@ -19,7 +19,8 @@
     "watchjs": "latest",
     "morgan": "latest",
     "microtime": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "screenfull": "~1.2.1"
   },
   "devDependencies": {
     "amdefine": "latest",
@@ -35,8 +36,7 @@
     "grunt-contrib-jshint": "latest",
     "grunt-jasmine-node": "latest",
     "grunt-contrib-watch": "latest",
-    "grunt-notify": "latest",
-    "grunt-jasmine-node": "latest"
+    "grunt-notify": "latest"
   },
   "scripts": {
     "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir spec/ --verbose --forceexit --coffee"

@@ -1,12 +1,18 @@
 body {
-  background-color: #222;
-  color: white;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+	background-color: #222;
+	color: white;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 }
 
+html:-webkit-full-screen	{ background-color: #222 !important; }
+html:-moz-full-screen		{ background-color: #222 !important; }
+html:-ms-full-screen		{ background-color: #222 !important; }
+html:-o-full-screen			{ background-color: #222 !important; }
+html:full-screen			{ background-color: #222 !important; }
+
 #canvas {
-  z-index: -99999;
-  margin: 0 auto;
+	z-index: -99999;
+	margin: 0 auto;
 }
