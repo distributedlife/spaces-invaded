@@ -1,4 +1,4 @@
-define(["ext/three"], function(THREE) {
+define(["ext/three", "shader!vertex/basic.glsl", "shader!fragment/colour.glsl"], function(THREE, vertexShader, fragmentShader) {
   "use strict";
 
   return function(originalText, halign, valign, font) {
@@ -7,7 +7,14 @@ define(["ext/three"], function(THREE) {
       
       var geometry = new THREE.ShapeGeometry(shape);
       geometry.computeBoundingBox();
-      var material = new THREE.MeshBasicMaterial();
+
+      var material = new THREE.ShaderMaterial({ 
+        uniforms: {
+           suppliedColour: {type:"v4", value: new THREE.Vector4(1.0,1.0,1.0,1.0)}
+        },
+        vertexShader: vertexShader.value, 
+        fragmentShader: fragmentShader.value, transparent: true 
+      });
       
       var mesh = new THREE.Mesh(geometry, material);
       mesh.rotation.x = -90; 

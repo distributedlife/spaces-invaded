@@ -1,4 +1,4 @@
-define(["ext/three", "lib/config",  "shader!vertex/basic.glsl", "shader!fragment/decal.glsl"], function(THREE, config, vShader, fShader) {
+define(["ext/three", "lib/config",  "shader!vertex/basic.glsl", "shader!fragment/decal.glsl"], function(THREE, config, vertexShader, fragmentShader) {
   "use strict";
   
   return function(model, texture_filename) {
@@ -9,8 +9,8 @@ define(["ext/three", "lib/config",  "shader!vertex/basic.glsl", "shader!fragment
       uniforms: {
         decal: {type: 't', value: decal}
       },
-      vertexShader: vShader.value, 
-      fragmentShader: fShader.value, transparent: true 
+      vertexShader: vertexShader.value, 
+      fragmentShader: fragmentShader.value, transparent: true 
     });
     
     var mesh = new THREE.Mesh(geometry, material)
