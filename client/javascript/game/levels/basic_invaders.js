@@ -45,7 +45,7 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                 bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png')));
                 client.add_to_scene(tank.mesh, bullet.mesh);
 
-                scoreText = Object.create(orthographic_text(client.score, "right", "top", {size: 20}));
+                scoreText = Object.create(orthographic_text(client.score, "right", "top", {size: 20 }));
                 scoreText.update_from_model({x: client.value(the_width) - 10, y: 0});
                 client.add_to_scene(scoreText.mesh);
 

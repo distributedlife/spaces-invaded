@@ -2,15 +2,18 @@ define(["ext/three", "shader!vertex/basic.glsl", "shader!fragment/colour.glsl"],
   "use strict";
 
   return function(originalText, halign, valign, font) {
-    var createMesh = function(textToDisplay) {
-      var shape = THREE.FontUtils.generateShapes(textToDisplay, font || {});
+    font = font || {}
+    font.colour = font.colour || [1.0, 1.0, 1.0, 1.0];
+
+    var createMesh = function(textToDisplay, colour) {
+      var shape = THREE.FontUtils.generateShapes(textToDisplay, font);
       
       var geometry = new THREE.ShapeGeometry(shape);
       geometry.computeBoundingBox();
 
       var material = new THREE.ShaderMaterial({ 
         uniforms: {
-           suppliedColour: {type:"v4", value: new THREE.Vector4(1.0,1.0,1.0,1.0)}
+           suppliedColour: {type:"v4", value: new THREE.Vector4(colour[0], colour[1], colour[2], colour[3])}
         },
         vertexShader: vertexShader.value, 
         fragmentShader: fragmentShader.value, transparent: true 
@@ -23,8 +26,10 @@ define(["ext/three", "shader!vertex/basic.glsl", "shader!fragment/colour.glsl"],
     };
 
     return {
-      mesh: createMesh(originalText),
+      mesh: createMesh(originalText, font.colour),
       position: {},
+      text: originalText,
+      colour: font.colour,
 
       width: function() { return this.mesh.geometry.boundingBox.max.x - this.mesh.geometry.boundingBox.min.x; },
       height: function() { return this.mesh.geometry.boundingBox.max.y - this.mesh.geometry.boundingBox.min.y; },
@@ -57,12 +62,19 @@ define(["ext/three", "shader!vertex/basic.glsl", "shader!fragment/colour.glsl"],
         this.mesh.visible = updated_model.active || true;
       },
 
+      update_colour: function(new_colour, scene) { 
+        this.colour = new_colour; 
+        this.update_text(this.text, scene);
+      },
+
       update_text: function(updatedText, scene) {
+        this.text = updatedText;
+
         var is_visible = this.mesh.visible;
 
         scene.remove(this.mesh);
 
-        this.mesh = createMesh(updatedText);
+        this.mesh = createMesh(updatedText, this.colour);
         this.mesh.position = this.align_position(this.position);
         this.mesh.visible = is_visible;
 
