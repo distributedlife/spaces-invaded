@@ -56,6 +56,13 @@ require.config({
           "use strict";
           return this.screenfull;
         }
+      },
+      'lib/particle_engine': {
+        deps: ['ext/ShaderParticleUtils', 'ext/ShaderParticleGroup', 'ext/ShaderParticleEmitter'],
+        init: function() {
+          "use strict";
+          return SPE;
+        }
       }
     }
 });

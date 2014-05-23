@@ -1,5 +1,8 @@
-define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 'game/score', 'lib/orthographic_text', 'font/helvetiker_regular'],
-  function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, score, orthographic_text, helvetiker_regular)
+define([
+    "socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 
+    'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail'],
+  function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, 
+    score, orthographic_text, helvetiker_regular, RocketTrail)
   {
     "use strict";
 
@@ -26,6 +29,8 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
 
         var is_inactive = function(thing) { return thing.active === false; };
         var is_active = function(thing) { return thing.active === true; };
+
+        var rocket_trail = null;
 
         var client = Object.create(OrthographicDisplay(element, width, height, options));
         _.extend(client, score);
@@ -81,8 +86,11 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                     client.add_to_scene(invader_sprite.mesh);
                 });
 
-                var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
-                soundtrack.play();
+                // var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
+                // soundtrack.play();
+
+                rocket_trail = RocketTrail.make();
+                client.add_to_scene(rocket_trail.mesh());
             },
             update_game: function() {
                 if (client.changed(the_tank)) { 
@@ -92,6 +100,7 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                 if (client.changed(tank_bullet)) { 
                     bullet.update_from_model(client.value(tank_bullet)); 
                     tank_bullet_fire.update_from_model(client.value(tank_bullet));
+                    rocket_trail.update_from_model(client.value(tank_bullet));
                 }
 
                 var counter = 0;
@@ -121,6 +130,10 @@ define(["socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config"
                 if (client.score_changed) {
                     scoreText.update_text(client.score, client.scene);    
                 }
+            },
+
+            tick_display: function(dt) {
+                rocket_trail.tick(dt);
             }
         });
 

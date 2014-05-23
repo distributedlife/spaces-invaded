@@ -7,7 +7,7 @@ define(["lib/window"], function(window) {
         display.resize(width, height);
       },
       run: function() {
-        display.animate();
+        display.update_display();
         window.request_animation_frame(this.run.bind(this));
       }
     };

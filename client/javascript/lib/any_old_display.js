@@ -7,22 +7,41 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	    var observer_count = function(state) { return state.observers; };
 	    var game_dimensions = function(state) { return state.dimensions; };
 
-		var client = {};
-		_.extend(client, tracks_state_changes);
-		_.extend(client, {
+		var display = {};
+		_.extend(display, tracks_state_changes);
+		_.extend(display, {
         	sound_manager: new SoundManager(),
         	width: width,
         	height: height,
+        	setup_complete: false,
+        	prior_step: Date.now(),
 
-        	animate: function() {},
+        	update_display: function() {
+        		if (this.value(is_paused) === true) {
+        			this.prior_step = Date.now();
+        			return;
+        		}
+
+        		var now = Date.now();
+      			var dt = (now - this.prior_step) / 1000 * 1.0;//TODO: config.global_time_dilation should apply to effects;
+      			this.prior_step = Date.now();
+
+        		this.animate(dt);
+        	},
+        	animate: function(dt) { 
+        		if (this.setup_complete) {
+        			this.tick_display(dt); 
+        		}
+        	},
+	        tick_display: function(dt) {},
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
-				client.sound_manager.pauseAll();
+				display.sound_manager.pauseAll();
 			},
 	        resume: function() { 
 	        	$('.paused').hide(); $('#paused').hide(); 
-	        	client.sound_manager.resumeAll();
+	        	display.sound_manager.resumeAll();
 	        },
 
 	        disconnected: function() { $('.disconnected').show(); },
@@ -46,8 +65,10 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            this.setup_game();
 
 	            if (this.value(is_paused) === true) {
-	            	client.sound_manager.pauseAll();
+	            	display.sound_manager.pauseAll();
 	            }
+
+	            this.setup_complete = true;
 	        },
 
 	        resize: function(width, height) {
@@ -92,6 +113,6 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 
 		$(".fullscreen").on('click', function() { if (screenfull.enabled) { screenfull.toggle(); } });
 
-		return client;
+		return display;
 	};
 });

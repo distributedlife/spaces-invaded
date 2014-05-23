@@ -30,7 +30,13 @@ define([], function() {
         	return f(this.prior_state, i) !== f(this.current_state, i); 
         },
 
-        value: function(f) {  return f(this.current_state);  },
+        value: function(f) {  
+            if (this.current_state === null) { 
+                return false; 
+            }
+
+            return f(this.current_state);  
+        },
         element_value: function(f, i) { return f(this.current_state, i); },
         
         is: function(f) { return f(this.current_state) === true; },

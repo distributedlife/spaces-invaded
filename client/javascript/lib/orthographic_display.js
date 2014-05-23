@@ -46,8 +46,11 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
       remove_from_scene: function() {
         _.each(arguments, function(mesh) { display.scene.remove(mesh); }.bind(display));
       },
-      animate: function() { 
-        display.scene_renderer.animate(display.scene, display.camera); 
+      animate: function(dt) {
+        this.scene_renderer.animate(display.scene, display.camera); 
+        if (this.setup_complete) {
+          this.tick_display(dt); 
+        }
       },
       resize: function(width, height) {
         display.__proto__.resize(width, height);
