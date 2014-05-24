@@ -1,4 +1,4 @@
-define(["lib/unique", "lib/tracks_state_changes"], function(unique, tracks_state_changes) {
+define(["lib/unique", "lib/tracks_state_changes", "lib/config"], function(unique, tracks_state_changes, config) {
   "use strict";
 
   return function(sound_manager, filename, additional_options, f) {
@@ -31,7 +31,11 @@ define(["lib/unique", "lib/tracks_state_changes"], function(unique, tracks_state
         }
       },
 
-      play: function() { this.sound.play(this.options); },
+      play: function() { 
+        //TODO: make this an actual global i.e. not implemented here. Wait for switch to web 3d audio though
+        this.options.volume = additional_options.volume * config.global_volume;
+        this.sound.play(this.options); 
+      },
       stop: function() { this.sound.stop(); }
     });
     

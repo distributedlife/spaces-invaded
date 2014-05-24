@@ -25,6 +25,8 @@ define(["lib/window"], function(window) {
             var pos = 0;
             //TODO: this positional stuff should go elsewhere
             $(".fullscreen").css("top", position(pos++)-icon_top()+"px").css("right", "0"); 
+            $(".sound-on").css("top", position(pos)-icon_top()+"px").css("right", "0"); 
+            $(".sound-off").css("top", position(pos++)-icon_top()+"px").css("right", "0"); 
             $(".disconnected").css("top", position(pos++)-icon_top()+"px").css("right", "0");
             $(".paused").css("top", position(pos++)-icon_top()+"px").css("right", "0");
             $(".players").css("top", position(pos++)-icon_top()+"px").css("right", "0");
@@ -43,6 +45,8 @@ define(["lib/window"], function(window) {
             var pos = 0;
             //TODO: this positional stuff should go elsewhere
             $(".fullscreen").css("right", position(pos++)+"px").css("top", icon_top()+"px");
+            $(".sound-on").css("right", position(pos)+"px").css("top", icon_top()+"px");
+            $(".sound-off").css("right", position(pos++)+"px").css("top", icon_top()+"px");
             $(".disconnected").css("right", position(pos++)+"px").css("top", icon_top()+"px");
             $(".paused").css("right", position(pos++)+"px").css("top", icon_top()+"px");
             $(".players").css("right", position(pos++)+"px").css("top", icon_top()+"px");

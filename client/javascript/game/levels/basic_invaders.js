@@ -46,8 +46,8 @@ define([
                     if (invader !== null) { client.remove_from_scene(invader.sprite.mesh); }
                 });
 
-                tank = Object.create(sprite(client.value(the_tank), config.resolve_image('tank.png')));
-                bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_image('tank_bullet.png')));
+                tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
+                bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
                 client.add_to_scene(tank.mesh, bullet.mesh);
 
                 scoreText = Object.create(orthographic_text(client.score, "right", "top", {size: 20 }));
@@ -58,7 +58,7 @@ define([
                 tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
 
                 _.each(client.value(all_invader_bullets), function(bullet) {
-                    var bullet_sprite = Object.create(sprite(bullet, config.resolve_image('invader_bullet.png')));
+                    var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png')));
                     var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
                     var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, is_inactive)); 
 
@@ -74,7 +74,7 @@ define([
                 });
 
                 _.each(client.value(all_invaders), function(invader) {
-                    var invader_sprite = Object.create(sprite(invader, config.resolve_image("invader_"+invader.type+".png")));
+                    var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
                     var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
 
                     invaders[invader.id] = {

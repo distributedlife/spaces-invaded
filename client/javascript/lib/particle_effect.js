@@ -12,9 +12,11 @@ define(['lib/particle_engine'], function(ParticleEngine) {
 				return this.group.mesh;
 			},
 			update_from_model: function(updated_model) {
-				this.emitters[0].position.x = updated_model.x;
-                this.emitters[0].position.y = updated_model.y;
-                this.emitters[0].alive = updated_model.active
+				_.each(this.emitters, function(emitter) {
+					emitter.position.x = updated_model.x;
+                	emitter.position.y = updated_model.y;
+                	emitter.alive = updated_model.active
+                });
 			}
 		};
 

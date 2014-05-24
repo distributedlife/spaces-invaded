@@ -112,6 +112,19 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	    });
 
 		$(".fullscreen").on('click', function() { if (screenfull.enabled) { screenfull.toggle(); } });
+		$(".sound-off").hide();
+		$(".sound-on").on('click', function() {
+			$(".sound-on").hide();
+			$(".sound-off").show();
+
+			display.sound_manager.mute();			
+		});
+		$(".sound-off").on('click', function() {
+			$(".sound-off").hide();
+			$(".sound-on").show();
+
+			display.sound_manager.unmute();			
+		});
 
 		return display;
 	};

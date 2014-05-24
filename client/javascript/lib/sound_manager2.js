@@ -23,9 +23,9 @@ define(['ext/soundmanager2-nodebug-jsmin', 'lib/config'], function (unused, conf
       // Hrmm, SM2 could not start. Missing SWF? Flash blocked? Show an error, etc.?
     };
 
-    soundmanager.volume = function(options) {
-      options.volume = options.volume * config.global_volume;
-    };
+    // soundmanager.volume = function(options) {
+      // options.volume = options.volume * config.global_volume;
+    // };
 
     soundmanager.disable_sound = function() {
       soundmanager.mute();

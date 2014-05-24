@@ -5,8 +5,9 @@ define(['lib/particle_effect', 'lib/config'], function(ParticleEffect, config) {
 		make: function() {
 			return new ParticleEffect(
 				{
-			        texture: THREE.ImageUtils.loadTexture(config.resolve_image("lib/particle.png")),
-			        maxAge: 1
+			        texture: THREE.ImageUtils.loadTexture(config.resolve_lib_image("particle.png")),
+			        maxAge: 1,
+			        hasPerspective: false
 			    },
 			    [{
 			        acceleration: new THREE.Vector3(0, 10, 0),
