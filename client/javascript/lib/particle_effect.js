@@ -15,7 +15,8 @@ define(['lib/particle_engine'], function(ParticleEngine) {
 				_.each(this.emitters, function(emitter) {
 					emitter.position.x = updated_model.x;
                 	emitter.position.y = updated_model.y;
-                	emitter.alive = updated_model.active
+                	emitter.position.z = updated_model.z || 0;
+                	emitter.alive = updated_model.active;
                 });
 			}
 		};
