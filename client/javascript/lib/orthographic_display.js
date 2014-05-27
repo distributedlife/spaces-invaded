@@ -28,6 +28,7 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
     _.extend(display, {
       camera: setup_camera(),
       scene: create_a_scene(),
+      things_in_scene: [],
       scene_renderer: build_scene_renderer(),
 
       dimensions: function(width, height) {
@@ -41,10 +42,26 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
         }
       },
       add_to_scene: function() { 
-        _.each(arguments, function(mesh) { display.scene.add(mesh); }.bind(display)); 
+        _.each(arguments, function(mesh) { 
+          display.scene.add(mesh); 
+          display.things_in_scene.push(mesh);
+        }.bind(display)); 
       },
       remove_from_scene: function() {
-        _.each(arguments, function(mesh) { display.scene.remove(mesh); }.bind(display));
+        _.each(arguments, function(mesh) { 
+          display.scene.remove(mesh); 
+
+          var i = display.things_in_scene.indexOf(mesh);
+          display.things_in_scene.splice(i, 1);
+
+        }.bind(display));
+      },
+      reset: function() {
+        _.each(display.things_in_scene, function(thing_in_scene) {
+          display.scene.remove(thing_in_scene);
+        });
+
+        display.things_in_scene = [];
       },
       animate: function(dt) {
         this.scene_renderer.animate(display.scene, display.camera); 

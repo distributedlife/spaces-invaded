@@ -32,103 +32,74 @@ define([
         var scoreText = {};
         var rocket_trail = null;
 
-        var setup = function() {};
-        var update = function() {};
-        var expired_effects_func = function(expired_effects) {
-            _.each(expired_effects, function(expired_effect) { 
-                client.remove_from_scene(expired_effect.mesh);
+        var setup = function() {
+            tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
+            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
+            client.add_to_scene(tank.mesh, bullet.mesh);
+
+
+
+            var scoreDisplayOptions = {
+                alignment: { 
+                    horizontal: "right", 
+                    vertical: "top"
+                },
+                size: 20
+            };
+            scoreText = Object.create(orthographic_text(
+                client.score, 
+                scoreDisplayOptions,  
+                //TODO: merge with display options
+                { size: 20 }
+            ));
+            scoreText.update_from_model({x: client.value(screen_width) - 10, y: 0});
+            client.add_to_scene(scoreText.mesh);
+
+
+
+            tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
+            tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
+
+            _.each(client.value(all_invader_bullets), function(bullet) {
+                var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png')));
+                var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
+                var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, is_inactive)); 
+
+                invader_bullets[bullet.id] = {
+                    sprite: bullet_sprite,
+                    audio: {
+                        fire: bullet_fire,
+                        miss: bullet_miss
+                    }
+                };
+
+                client.add_to_scene(bullet_sprite.mesh);
             });
+
+            _.each(client.value(all_invaders), function(invader) {
+                var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
+                var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
+
+                invaders[invader.id] = {
+                    sprite: invader_sprite,
+                    audio: {
+                        die: invader_die
+                    }
+                };
+                client.add_to_scene(invader_sprite.mesh);
+            });
+
+            var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
+            soundtrack.play();
+
+            rocket_trail = RocketTrail.make();
+            client.add_to_scene(rocket_trail.mesh());
+
+            client.permanent_effects.push(rocket_trail);
         };
 
-        //TODO: move to any old display: reset(); reset is called before setup();
-        // var things_in_scene = [];
-        // _.each(things_in_scene, function(thing) {
-        //     client.remove_from_scene(thing);
-        // })
 
-        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update, expired_effects_func));
-        _.extend(client, score);
-        _.extend(client, {
-            setup_game: function() {
-                //TODO: move to reset as abstraction
-                if (tank !== null) { client.remove_from_scene(tank.mesh); }
-                if (bullet !== null) { client.remove_from_scene(bullet.mesh); }
-                if (scoreText !== null) { client.remove_from_scene(scoreText.mesh); }
-                _.each(invader_bullets, function(bullet) {
-                    if (bullet !== null) { client.remove_from_scene(bullet.sprite.mesh); }
-                });
-                _.each(invaders, function(invader) {
-                    if (invader !== null) { client.remove_from_scene(invader.sprite.mesh); }
-                });
-
-
-
-                tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
-                bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
-                client.add_to_scene(tank.mesh, bullet.mesh);
-
-
-
-                var scoreDisplayOptions = {
-                    alignment: { 
-                        horizontal: "right", 
-                        vertical: "top"
-                    },
-                    size: 20
-                };
-                scoreText = Object.create(orthographic_text(
-                    client.score, 
-                    scoreDisplayOptions,  
-                    //TODO: merge with display options
-                    { size: 20 }
-                ));
-                scoreText.update_from_model({x: client.value(screen_width) - 10, y: 0});
-                client.add_to_scene(scoreText.mesh);
-
-
-
-                tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
-                tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
-
-                _.each(client.value(all_invader_bullets), function(bullet) {
-                    var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png')));
-                    var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
-                    var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, is_inactive)); 
-
-                    invader_bullets[bullet.id] = {
-                        sprite: bullet_sprite,
-                        audio: {
-                            fire: bullet_fire,
-                            miss: bullet_miss
-                        }
-                    };
-
-                    client.add_to_scene(bullet_sprite.mesh);
-                });
-
-                _.each(client.value(all_invaders), function(invader) {
-                    var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
-                    var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
-
-                    invaders[invader.id] = {
-                        sprite: invader_sprite,
-                        audio: {
-                            die: invader_die
-                        }
-                    };
-                    client.add_to_scene(invader_sprite.mesh);
-                });
-
-                var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
-                soundtrack.play();
-
-                rocket_trail = RocketTrail.make();
-                client.add_to_scene(rocket_trail.mesh());
-
-                client.permanent_effects.push(rocket_trail);
-            },
-
-            /*
+/*
                 [
                     {on_change: the_tank, do: [tank.update_from_model, tank_die.update_from_model},
                     {on_change: the_tank, when: is_inactive, do: game_over_man}
@@ -147,73 +118,80 @@ define([
                     invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
                 }
             */
-
-            update_game: function() {
-                if (client.changed(the_tank)) { 
-                    tank.update_from_model(client.value(the_tank));
-                    tank_die.update_from_model(client.value(the_tank));
-                }
-                if (client.changed(tank_bullet)) { 
-                    bullet.update_from_model(client.value(tank_bullet)); 
-                    tank_bullet_fire.update_from_model(client.value(tank_bullet));
-                    rocket_trail.update_from_model(client.value(tank_bullet));
-                }
-
-                var counter = 0;
-                _.each(client.value(all_invader_bullets), function(bullet) {
-                    if (client.element_changed(an_invader_bullet, counter)) {
-                        invader_bullets[bullet.id].sprite.update_from_model(bullet);
-                        invader_bullets[bullet.id].audio.fire.update_from_model(bullet);
-                        invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
-                    }
-                    counter++;
-                }); 
-
-                counter = 0;
-                _.each(client.value(all_invaders), function(invader) {
-                    if (client.element_changed(an_invader, counter)) {
-                        invaders[invader.id].sprite.update_from_model(invader);
-                        invaders[invader.id].audio.die.update_from_model(invader);
-
-                        var create_death_score = function(invader) {
-                            var death_score = new orthographic_text(
-                                //TODO: score based on invader type
-                                "5", 
-                                {
-                                    duration: 1, 
-                                    scale: {from: 1, to: 5},
-                                    colour: {
-                                        from: [1.0, 1.0, 1.0, 1.0],
-                                        to: [1.0, 0.0, 0.0, 0.0]
-                                    }
-                                }, 
-                                {
-                                    size: 20
-                                }
-                            );
-                            death_score.update_from_model({x: invader.x, y: invader.y});
-
-                            client.add_to_scene(death_score.mesh);
-                            client.temporary_effects.push(death_score);
-                        };
-
-                        if (!invader.active && client.prior_element_value(an_invader, counter).active) {
-                            create_death_score(invader);
-                        }
-                    }
-                    counter++;
-                }); 
-
-                if (client.value(the_tank).active === false) {
-                    //TODO: implement game over man
-                }
-
-                client.calculate_score(client.value(all_invaders), client.value(the_duration), client.value(misses));
-                if (client.score_changed) {
-                    scoreText.update_text(client.score, client.scene);    
-                }
+        var update = function() {
+            if (client.changed(the_tank)) { 
+                tank.update_from_model(client.value(the_tank));
+                tank_die.update_from_model(client.value(the_tank));
             }
-        });
+            if (client.changed(tank_bullet)) { 
+                bullet.update_from_model(client.value(tank_bullet)); 
+                tank_bullet_fire.update_from_model(client.value(tank_bullet));
+                rocket_trail.update_from_model(client.value(tank_bullet));
+            }
+
+            var counter = 0;
+            _.each(client.value(all_invader_bullets), function(bullet) {
+                if (client.element_changed(an_invader_bullet, counter)) {
+                    invader_bullets[bullet.id].sprite.update_from_model(bullet);
+                    invader_bullets[bullet.id].audio.fire.update_from_model(bullet);
+                    invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
+                }
+                counter++;
+            }); 
+
+            counter = 0;
+            _.each(client.value(all_invaders), function(invader) {
+                if (client.element_changed(an_invader, counter)) {
+                    invaders[invader.id].sprite.update_from_model(invader);
+                    invaders[invader.id].audio.die.update_from_model(invader);
+
+                    var create_death_score = function(invader) {
+                        var death_score = new orthographic_text(
+                            //TODO: score based on invader type
+                            "5", 
+                            {
+                                duration: 1, 
+                                scale: {from: 1, to: 5},
+                                colour: {
+                                    from: [1.0, 1.0, 1.0, 1.0],
+                                    to: [1.0, 0.0, 0.0, 0.0]
+                                }
+                            }, 
+                            {
+                                size: 20
+                            }
+                        );
+                        death_score.update_from_model({x: invader.x, y: invader.y});
+
+                        client.add_to_scene(death_score.mesh);
+                        client.temporary_effects.push(death_score);
+                    };
+
+                    if (!invader.active && client.prior_element_value(an_invader, counter).active) {
+                        create_death_score(invader);
+                    }
+                }
+                counter++;
+            }); 
+
+            if (client.value(the_tank).active === false) {
+                //TODO: implement game over man
+            }
+
+            client.calculate_score(client.value(all_invaders), client.value(the_duration), client.value(misses));
+            if (client.score_changed) {
+                scoreText.update_text(client.score, client.scene);    
+            }
+        };
+
+        var expired_effects_func = function(expired_effects) {
+            _.each(expired_effects, function(expired_effect) { 
+                client.remove_from_scene(expired_effect.mesh);
+            });
+        };
+
+        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update, expired_effects_func));
+        _.extend(client, score);
 
         return client;
     };

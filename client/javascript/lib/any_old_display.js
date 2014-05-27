@@ -46,13 +46,6 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
                 expired_effects_func(expired_effects);
             },
 
-			add_to_scene: function() { 
-			_.each(arguments, function(mesh) { this.scene.add(mesh); }.bind(this)); 
-			},
-			remove_from_scene: function() {
-			_.each(arguments, function(mesh) { this.scene.remove(mesh); }.bind(this));
-			},
-
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
 				display.sound_manager.pauseAll();
@@ -75,12 +68,11 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            }
 	        },
 
-	        setup_game: function() { console.log ("implement me"); },
-	        update_game: function() { console.log ("implement me"); },
+	        reset: function() {},
 
 			setup: function(state) {
+				this.reset();
 	            this.update_state(state);
-	            this.setup_game();
 	            setup_func();
 
 	            if (this.value(is_paused) === true) {
@@ -110,7 +102,6 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            if (this.changed(player_count)) {  $('#player-count').text(this.format_display_count(this.value(player_count)));  }
 	            if (this.changed(observer_count)) {  $('#observer-count').text(this.format_display_count(this.value(observer_count)));  }
 
-	            this.update_game();   
 	            update_func();
 	        }, 
 
