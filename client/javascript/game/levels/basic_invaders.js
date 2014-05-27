@@ -34,6 +34,11 @@ define([
 
         var setup = function() {};
         var update = function() {};
+        var expired_effects_func = function(expired_effects) {
+            _.each(expired_effects, function(expired_effect) { 
+                client.remove_from_scene(expired_effect.mesh);
+            });
+        };
 
         //TODO: move to any old display: reset(); reset is called before setup();
         // var things_in_scene = [];
@@ -41,7 +46,7 @@ define([
         //     client.remove_from_scene(thing);
         // })
 
-        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update));
+        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update, expired_effects_func));
         _.extend(client, score);
         _.extend(client, {
             setup_game: function() {

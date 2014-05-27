@@ -25,7 +25,8 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
         		}
 
         		var now = Date.now();
-      			var dt = (now - this.prior_step) / 1000 * 1.0;//TODO: config.global_time_dilation should apply to effects;
+        		//TODO: config.global_time_dilation should apply to effects;
+      			var dt = (now - this.prior_step) / 1000 * 1.0;
       			this.prior_step = Date.now();
 
         		this.animate(dt);
@@ -42,8 +43,15 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
                 var expired_effects = _.select(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
                 this.temporary_effects = _.reject(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
 
-                // expired_effects_func(expired_effects);
+                expired_effects_func(expired_effects);
             },
+
+			add_to_scene: function() { 
+			_.each(arguments, function(mesh) { this.scene.add(mesh); }.bind(this)); 
+			},
+			remove_from_scene: function() {
+			_.each(arguments, function(mesh) { this.scene.remove(mesh); }.bind(this));
+			},
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();

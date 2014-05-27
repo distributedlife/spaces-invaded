@@ -1,4 +1,5 @@
 var _ = require('underscore');
+var team = require('./enums/teams');
 
 module.exports = function(game_state) {
   "use strict";
@@ -50,7 +51,7 @@ module.exports = function(game_state) {
         if (this.is_off_screen(bullet)) { 
           bullet.die(); 
 
-          if (bullet.name === "bullet") {
+          if (bullet.team === team.earth) {
             game_state.misses += 1;
           }
         }
