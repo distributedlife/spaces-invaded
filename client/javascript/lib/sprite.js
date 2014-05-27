@@ -5,12 +5,16 @@ define(["ext/three", "lib/config",  "shader!vertex/basic.glsl", "shader!fragment
     var geometry = new THREE.PlaneGeometry(model.width, model.height);
     var decal = THREE.ImageUtils.loadTexture(texture_filename);
     
+    var uniforms = {
+      decal: {type: 't', value: decal} 
+    }
+
     var material = new THREE.ShaderMaterial({ 
-      uniforms: {
-        decal: {type: 't', value: decal}
-      },
+      uniforms: uniforms,
       vertexShader: vertexShader.value, 
-      fragmentShader: fragmentShader.value, transparent: true 
+      fragmentShader: fragmentShader.value, 
+      transparent: true,
+      blending: THREE.AdditiveBlending
     });
     
     var mesh = new THREE.Mesh(geometry, material)

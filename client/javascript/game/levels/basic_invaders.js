@@ -14,28 +14,38 @@ define([
         var an_invader_bullet = function(state, i) { return state.invader_bullets[i]; };
         var all_invader_bullets = function(state, i) { return state.invader_bullets; };
 
-        var the_width = function(state) { return state.dimensions.width; };
+        var screen_width = function(state) { return state.dimensions.width; };
         var the_duration = function(state) { return state.duration; };
         var misses = function(state) { return state.misses; };
+
+        var is_inactive = function(thing) { return thing.active === false; };
+        var is_active = function(thing) { return thing.active === true; };
 
         var tank = null;
         var bullet = null;
         var invader_bullets = {};
         var invaders = {};
-        var scoreText = {};
 
         var tank_die = null;
         var tank_bullet_fire = null;
 
-        var is_inactive = function(thing) { return thing.active === false; };
-        var is_active = function(thing) { return thing.active === true; };
-
+        var scoreText = {};
         var rocket_trail = null;
 
-        var client = Object.create(OrthographicDisplay(element, width, height, options));
+        var setup = function() {};
+        var update = function() {};
+
+        //TODO: move to any old display: reset(); reset is called before setup();
+        // var things_in_scene = [];
+        // _.each(things_in_scene, function(thing) {
+        //     client.remove_from_scene(thing);
+        // })
+
+        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update));
         _.extend(client, score);
         _.extend(client, {
             setup_game: function() {
+                //TODO: move to reset as abstraction
                 if (tank !== null) { client.remove_from_scene(tank.mesh); }
                 if (bullet !== null) { client.remove_from_scene(bullet.mesh); }
                 if (scoreText !== null) { client.remove_from_scene(scoreText.mesh); }
@@ -46,13 +56,31 @@ define([
                     if (invader !== null) { client.remove_from_scene(invader.sprite.mesh); }
                 });
 
+
+
                 tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
                 bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
                 client.add_to_scene(tank.mesh, bullet.mesh);
 
-                scoreText = Object.create(orthographic_text(client.score, "right", "top", {size: 20 }));
-                scoreText.update_from_model({x: client.value(the_width) - 10, y: 0});
+
+
+                var scoreDisplayOptions = {
+                    alignment: { 
+                        horizontal: "right", 
+                        vertical: "top"
+                    },
+                    size: 20
+                };
+                scoreText = Object.create(orthographic_text(
+                    client.score, 
+                    scoreDisplayOptions,  
+                    //TODO: merge with display options
+                    { size: 20 }
+                ));
+                scoreText.update_from_model({x: client.value(screen_width) - 10, y: 0});
                 client.add_to_scene(scoreText.mesh);
+
+
 
                 tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
                 tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
@@ -86,12 +114,35 @@ define([
                     client.add_to_scene(invader_sprite.mesh);
                 });
 
-                // var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
-                // soundtrack.play();
+                var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
+                soundtrack.play();
 
                 rocket_trail = RocketTrail.make();
                 client.add_to_scene(rocket_trail.mesh());
+
+                client.permanent_effects.push(rocket_trail);
             },
+
+            /*
+                [
+                    {on_change: the_tank, do: [tank.update_from_model, tank_die.update_from_model},
+                    {on_change: the_tank, when: is_inactive, do: game_over_man}
+                    {on_change: tank_bullet, do: [bullet.update_from_model, tank_bullet.update_from_model, rocket_trail.update_from_model]}
+
+                or:
+
+                    {on_change: the_tank, do: tank_changed}
+                    {on_change: tank_bullet, do: bullet_changed}
+                    {for_each: all_invader_bullets, when_element_changed_do: invader_bullet_changed}
+                ]
+
+                var invader_bullet_changed = function(bullet) {
+                    invader_bullets[bullet.id].sprite.update_from_model(bullet);
+                    invader_bullets[bullet.id].audio.fire.update_from_model(bullet);
+                    invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
+                }
+            */
+
             update_game: function() {
                 if (client.changed(the_tank)) { 
                     tank.update_from_model(client.value(the_tank));
@@ -118,6 +169,32 @@ define([
                     if (client.element_changed(an_invader, counter)) {
                         invaders[invader.id].sprite.update_from_model(invader);
                         invaders[invader.id].audio.die.update_from_model(invader);
+
+                        var create_death_score = function(invader) {
+                            var death_score = new orthographic_text(
+                                //TODO: score based on invader type
+                                "5", 
+                                {
+                                    duration: 1, 
+                                    scale: {from: 1, to: 5},
+                                    colour: {
+                                        from: [1.0, 1.0, 1.0, 1.0],
+                                        to: [1.0, 0.0, 0.0, 0.0]
+                                    }
+                                }, 
+                                {
+                                    size: 20
+                                }
+                            );
+                            death_score.update_from_model({x: invader.x, y: invader.y});
+
+                            client.add_to_scene(death_score.mesh);
+                            client.temporary_effects.push(death_score);
+                        };
+
+                        if (!invader.active && client.prior_element_value(an_invader, counter).active) {
+                            create_death_score(invader);
+                        }
                     }
                     counter++;
                 }); 
@@ -130,10 +207,6 @@ define([
                 if (client.score_changed) {
                     scoreText.update_text(client.score, client.scene);    
                 }
-            },
-
-            tick_display: function(dt) {
-                rocket_trail.tick(dt);
             }
         });
 

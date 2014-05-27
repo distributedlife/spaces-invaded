@@ -38,6 +38,7 @@ define([], function() {
             return f(this.current_state);  
         },
         element_value: function(f, i) { return f(this.current_state, i); },
+        prior_element_value: function(f, i) { return f(this.prior_state, i); },
         
         is: function(f) { return f(this.current_state) === true; },
         element_is: function(f, i) { return f(this.current_state, i) === true;}

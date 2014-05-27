@@ -1,7 +1,7 @@
 define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scene_renderer", "lib/window"], function(_, THREE, GridView, AnyOldDisplay, SceneRenderer, window) {
   "use strict";
 
-  return function(element, width, height, options) {
+  return function(element, width, height, options, setup_func, update_func) {
     var setup_camera = function() {
       var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
       camera.position.z = 1;
@@ -24,7 +24,7 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
       return scene_renderer;
     };
 
-    var display = Object.create(AnyOldDisplay(element, width, height, options)) ;
+    var display = Object.create(AnyOldDisplay(element, width, height, options, setup_func, update_func)) ;
     _.extend(display, {
       camera: setup_camera(),
       scene: create_a_scene(),
@@ -49,7 +49,7 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
       animate: function(dt) {
         this.scene_renderer.animate(display.scene, display.camera); 
         if (this.setup_complete) {
-          this.tick_display(dt); 
+          this.tick(dt); 
         }
       },
       resize: function(width, height) {

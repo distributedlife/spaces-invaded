@@ -1,7 +1,7 @@
 define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes", "ext/screenfull"], function($, KeyboardController, SoundManager, _, tracks_state_changes, screenfull) {
 	"use strict";
 
-	return function(element, width, height, options) {
+	return function(element, width, height, options, setup_func, update_func, expired_effects_func) {
 		var is_paused = function(state) { return state.paused; };
 	    var player_count = function(state) { return state.players; };
 	    var observer_count = function(state) { return state.observers; };
@@ -15,6 +15,8 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
         	height: height,
         	setup_complete: false,
         	prior_step: Date.now(),
+        	temporary_effects: [],
+        	permanent_effects: [],
 
         	update_display: function() {
         		if (this.value(is_paused) === true) {
@@ -30,10 +32,18 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
         	},
         	animate: function(dt) { 
         		if (this.setup_complete) {
-        			this.tick_display(dt); 
+        			this.tick(dt); 
         		}
         	},
-	        tick_display: function(dt) {},
+	        tick: function(dt) {
+                _.each(this.permanent_effects, function(permanent_effect) { permanent_effect.tick(dt); });
+                _.each(this.temporary_effects, function(temporary_effect) { temporary_effect.tick(dt); });
+
+                var expired_effects = _.select(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
+                this.temporary_effects = _.reject(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
+
+                // expired_effects_func(expired_effects);
+            },
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
@@ -63,6 +73,7 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 			setup: function(state) {
 	            this.update_state(state);
 	            this.setup_game();
+	            setup_func();
 
 	            if (this.value(is_paused) === true) {
 	            	display.sound_manager.pauseAll();
@@ -92,6 +103,7 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            if (this.changed(observer_count)) {  $('#observer-count').text(this.format_display_count(this.value(observer_count)));  }
 
 	            this.update_game();   
+	            update_func();
 	        }, 
 
 	        connect_to_server: function() {

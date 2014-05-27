@@ -12,6 +12,7 @@ define(["lodash"], function(_) {
             this.score += _.where(invaders, {active: false, type: "skull"}).length * 5;
             this.score += _.where(invaders, {active: false, type: "bug"}).length * 10;
             this.score += _.where(invaders, {active: false, type: "squid"}).length * 20;
+            //TODO: write a test for ~~ of a number to see if it has any biases during rounding.
             // this.score -= ~~(duration);
             this.score -= misses;
 
