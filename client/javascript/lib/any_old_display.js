@@ -1,7 +1,7 @@
 define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes", "ext/screenfull"], function($, KeyboardController, SoundManager, _, tracks_state_changes, screenfull) {
 	"use strict";
 
-	return function(element, width, height, options, setup_func, update_func, expired_effects_func) {
+	return function(element, width, height, options, setup_func, update_func) {
 		var is_paused = function(state) { return state.paused; };
 	    var player_count = function(state) { return state.players; };
 	    var observer_count = function(state) { return state.observers; };
@@ -44,8 +44,9 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
                 var expired_effects = _.select(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
                 this.temporary_effects = _.reject(this.temporary_effects, function(temporary_effect) { !temporary_effect.is_alive(); });
 
-                expired_effects_func(expired_effects);
+                this.expired_effects_func(expired_effects);
             },
+            expired_effects_func: function(expired_effects) {},
 
 			pause: function() { 
 				$('.paused').show(); $('#paused').show();
@@ -101,7 +102,6 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
             	});
 	        },
 	        on_conditional_change: function(model, condition, callback) {
-				console.log(model, condition, callback);
 	            this.changes.push({
 	            	focus: model, 
 	            	'when': condition, 

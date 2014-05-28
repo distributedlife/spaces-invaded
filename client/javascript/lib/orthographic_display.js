@@ -1,7 +1,7 @@
 define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scene_renderer", "lib/window"], function(_, THREE, GridView, AnyOldDisplay, SceneRenderer, window) {
   "use strict";
 
-  return function(element, width, height, options, setup_func, update_func, expired_effects_func) {
+  return function(element, width, height, options, setup_func, update_func) {
     var setup_camera = function() {
       var camera = new THREE.OrthographicCamera(0, width, 0, height, -2000, 1000);
       camera.position.z = 1;
@@ -24,12 +24,16 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
       return scene_renderer;
     };
 
-    var display = Object.create(AnyOldDisplay(element, width, height, options, setup_func, update_func, expired_effects_func)) ;
+    var display = Object.create(AnyOldDisplay(element, width, height, options, setup_func, update_func)) ;
     _.extend(display, {
       camera: setup_camera(),
       scene: create_a_scene(),
       things_in_scene: [],
       scene_renderer: build_scene_renderer(),
+
+      expired_effects_func: function(expired_effects) {
+        _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
+      },
 
       dimensions: function(width, height) {
         if (this.current_state === null) {

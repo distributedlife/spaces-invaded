@@ -42,9 +42,7 @@ define([
                     colour: {
                         from: [1.0, 1.0, 1.0, 1.0],
                         to: [1.0, 0.0, 0.0, 0.0]
-                    }
-                }, 
-                {
+                    },
                     size: 20
                 }
             );
@@ -89,13 +87,10 @@ define([
             tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
             tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
             client.add_to_scene(tank.mesh);
-            client.on_change(the_tank, when_tank_changes);
-            client.on_conditional_change(the_tank, is_inactive, game_over_man);
 
 
             bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
             client.add_to_scene(bullet.mesh);
-            client.on_change(tank_bullet, when_tank_bullet_changes);
 
 
             var scoreDisplayOptions = {
@@ -107,9 +102,7 @@ define([
             };
             scoreText = Object.create(orthographic_text(
                 client.score, 
-                scoreDisplayOptions,  
-                //TODO: merge with display options
-                { size: 20 }
+                scoreDisplayOptions
             ));
             scoreText.update_from_model({x: client.value(screen_width) - 10, y: 0});
             client.add_to_scene(scoreText.mesh);
@@ -131,8 +124,7 @@ define([
 
                 client.add_to_scene(bullet_sprite.mesh);
             });
-            client.on_element_change(all_invader_bullets, an_invader_bullet, when_an_invader_bullet_changes);
-
+            
 
             _.each(client.value(all_invaders), function(invader) {
                 var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
@@ -146,8 +138,7 @@ define([
                 };
                 client.add_to_scene(invader_sprite.mesh);
             });
-            client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
-
+            
 
             var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
             soundtrack.play();
@@ -156,6 +147,13 @@ define([
             rocket_trail = RocketTrail.make();
             client.add_to_scene(rocket_trail.mesh());
             client.permanent_effects.push(rocket_trail);
+
+
+            client.on_change(the_tank, when_tank_changes);
+            client.on_conditional_change(the_tank, is_inactive, game_over_man);
+            client.on_change(tank_bullet, when_tank_bullet_changes);
+            client.on_element_change(all_invader_bullets, an_invader_bullet, when_an_invader_bullet_changes);
+            client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
         };
 
         var update = function() {
@@ -165,13 +163,7 @@ define([
             }
         };
 
-        var expired_effects_func = function(expired_effects) {
-            _.each(expired_effects, function(expired_effect) { 
-                client.remove_from_scene(expired_effect.mesh);
-            });
-        };
-
-        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update, expired_effects_func));
+        var client = Object.create(OrthographicDisplay(element, width, height, options, setup, update));
         _.extend(client, score);
 
         return client;

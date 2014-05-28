@@ -2,7 +2,7 @@ define(["ext/three", "lib/temporary_effect", "shader!vertex/scale.glsl", "shader
   function(THREE, temporary_effect, vertexShader, fragmentShader) {
   "use strict";
 
-  return function(initialText, display_options, font_options) {
+  return function(initialText, display_options) {
     _.defaults(display_options, {
       alignment: {
         horizontal: "centre",
@@ -21,7 +21,7 @@ define(["ext/three", "lib/temporary_effect", "shader!vertex/scale.glsl", "shader
     });
 
     var createMeshFromText = function(textToDisplay) {
-      var shape = THREE.FontUtils.generateShapes(textToDisplay, font_options);
+      var shape = THREE.FontUtils.generateShapes(textToDisplay, display_options);
       
       var geometry = new THREE.ShapeGeometry(shape);
       geometry.computeBoundingBox();
@@ -47,7 +47,7 @@ define(["ext/three", "lib/temporary_effect", "shader!vertex/scale.glsl", "shader
     };
 
     var orthographic_text = {
-      mesh: createMeshFromText(initialText, font_options.colour),
+      mesh: createMeshFromText(initialText),
       position: display_options.position,
       text: initialText,
 
