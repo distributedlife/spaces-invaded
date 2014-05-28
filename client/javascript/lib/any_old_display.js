@@ -17,6 +17,7 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
         	prior_step: Date.now(),
         	temporary_effects: [],
         	permanent_effects: [],
+        	changes: [],
 
         	update_display: function() {
         		if (this.value(is_paused) === true) {
@@ -91,6 +92,60 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	        	return {width: width, height: height};
 	        },
 
+
+	        //TODO: move this to something that is made out of 'tracks state changes' and 'provides automatic change notification'
+            on_change: function(model, callback) {
+            	this.changes.push({
+            		focus: model, 
+            		func: callback
+            	});
+	        },
+	        on_conditional_change: function(model, condition, callback) {
+				console.log(model, condition, callback);
+	            this.changes.push({
+	            	focus: model, 
+	            	'when': condition, 
+	            	func: callback
+	            });
+	        },
+	        on_element_change: function(model_array, model_element, callback) {
+	            this.changes.push({
+	            	focus_each_of: model_array, 
+	            	focus_element: model_element, 
+	            	func: callback
+	            });
+	        },
+	        handle_arrays: function(change) {
+	        	var counter = 0;
+                _.each(this.value(change.focus_each_of), function(model) {
+                    if (this.element_changed(change.focus_element, counter)) {
+                        change.func(model, this.prior_element(change.focus_element, counter));
+                    }
+                    counter++;
+                }.bind(this)); 
+	        },
+	        handle_objects: function(change) {
+	        	if (this.changed(change.focus)) {
+                    if (change.when === undefined) {
+                        change.func(this.value(change.focus), this.prior_value(change.focus));
+                    } else {
+                        if (change.when(this.value(change.focus))) {
+                            change.func(this.value(change.focus), this.prior_value(change.focus));
+                        }
+                    }
+                }
+	        },
+	        detect_changes_and_notify_observers: function() {
+	        	_.each(this.changes, function(change) {
+	                if (change.focus === undefined) {
+	                    this.handle_arrays(change);
+	                } else {
+	                 	this.handle_objects(change);   
+	                }
+	            }.bind(this));
+	        },
+
+
 	        update: function(state) {
 	            this.update_state(state);
 
@@ -102,6 +157,7 @@ define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib
 	            if (this.changed(player_count)) {  $('#player-count').text(this.format_display_count(this.value(player_count)));  }
 	            if (this.changed(observer_count)) {  $('#observer-count').text(this.format_display_count(this.value(observer_count)));  }
 
+	            this.detect_changes_and_notify_observers();
 	            update_func();
 	        }, 
 

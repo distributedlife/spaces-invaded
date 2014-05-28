@@ -32,11 +32,70 @@ define([
         var scoreText = {};
         var rocket_trail = null;
 
+        var create_death_score = function(invader) {
+            var death_score = new orthographic_text(
+                //TODO: score based on invader type
+                "5", 
+                {
+                    duration: 0.5, 
+                    scale: {from: 1, to: 5},
+                    colour: {
+                        from: [1.0, 1.0, 1.0, 1.0],
+                        to: [1.0, 0.0, 0.0, 0.0]
+                    }
+                }, 
+                {
+                    size: 20
+                }
+            );
+            death_score.update_from_model({x: invader.x, y: invader.y});
+
+            client.add_to_scene(death_score.mesh);
+            client.temporary_effects.push(death_score);
+        };
+
+        var when_tank_changes = function(model, prior_model) {
+            tank.update_from_model(model);
+            tank_die.update_from_model(model);
+        };
+
+        var when_tank_bullet_changes = function(model, prior_model) {
+            bullet.update_from_model(model); 
+            tank_bullet_fire.update_from_model(model);
+            rocket_trail.update_from_model(model);
+        };
+
+        var when_an_invader_bullet_changes = function(model, prior_model) {
+            invader_bullets[model.id].sprite.update_from_model(model);
+            invader_bullets[model.id].audio.fire.update_from_model(model);
+            invader_bullets[model.id].audio.miss.update_from_model(model);
+        };
+
+        var when_an_invader_changes = function(model, prior_model) {
+            invaders[model.id].sprite.update_from_model(model);
+            invaders[model.id].audio.die.update_from_model(model);
+
+            if (!model.active && prior_model.active) {
+                create_death_score(model);
+            }
+        };
+
+        var game_over_man = function(model, prior_model) {
+            console.log("TODO: implement game over man");
+        };
+
         var setup = function() {
             tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
-            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
-            client.add_to_scene(tank.mesh, bullet.mesh);
+            tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
+            tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
+            client.add_to_scene(tank.mesh);
+            client.on_change(the_tank, when_tank_changes);
+            client.on_conditional_change(the_tank, is_inactive, game_over_man);
 
+
+            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
+            client.add_to_scene(bullet.mesh);
+            client.on_change(tank_bullet, when_tank_bullet_changes);
 
 
             var scoreDisplayOptions = {
@@ -57,9 +116,6 @@ define([
 
 
 
-            tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
-            tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
-
             _.each(client.value(all_invader_bullets), function(bullet) {
                 var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png')));
                 var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
@@ -75,6 +131,8 @@ define([
 
                 client.add_to_scene(bullet_sprite.mesh);
             });
+            client.on_element_change(all_invader_bullets, an_invader_bullet, when_an_invader_bullet_changes);
+
 
             _.each(client.value(all_invaders), function(invader) {
                 var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
@@ -88,96 +146,19 @@ define([
                 };
                 client.add_to_scene(invader_sprite.mesh);
             });
+            client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
+
 
             var soundtrack = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('soundtrack.mp3'), {volume: 75}));
             soundtrack.play();
 
+
             rocket_trail = RocketTrail.make();
             client.add_to_scene(rocket_trail.mesh());
-
             client.permanent_effects.push(rocket_trail);
         };
 
-
-/*
-                [
-                    {on_change: the_tank, do: [tank.update_from_model, tank_die.update_from_model},
-                    {on_change: the_tank, when: is_inactive, do: game_over_man}
-                    {on_change: tank_bullet, do: [bullet.update_from_model, tank_bullet.update_from_model, rocket_trail.update_from_model]}
-
-                or:
-
-                    {on_change: the_tank, do: tank_changed}
-                    {on_change: tank_bullet, do: bullet_changed}
-                    {for_each: all_invader_bullets, when_element_changed_do: invader_bullet_changed}
-                ]
-
-                var invader_bullet_changed = function(bullet) {
-                    invader_bullets[bullet.id].sprite.update_from_model(bullet);
-                    invader_bullets[bullet.id].audio.fire.update_from_model(bullet);
-                    invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
-                }
-            */
         var update = function() {
-            if (client.changed(the_tank)) { 
-                tank.update_from_model(client.value(the_tank));
-                tank_die.update_from_model(client.value(the_tank));
-            }
-            if (client.changed(tank_bullet)) { 
-                bullet.update_from_model(client.value(tank_bullet)); 
-                tank_bullet_fire.update_from_model(client.value(tank_bullet));
-                rocket_trail.update_from_model(client.value(tank_bullet));
-            }
-
-            var counter = 0;
-            _.each(client.value(all_invader_bullets), function(bullet) {
-                if (client.element_changed(an_invader_bullet, counter)) {
-                    invader_bullets[bullet.id].sprite.update_from_model(bullet);
-                    invader_bullets[bullet.id].audio.fire.update_from_model(bullet);
-                    invader_bullets[bullet.id].audio.miss.update_from_model(bullet);
-                }
-                counter++;
-            }); 
-
-            counter = 0;
-            _.each(client.value(all_invaders), function(invader) {
-                if (client.element_changed(an_invader, counter)) {
-                    invaders[invader.id].sprite.update_from_model(invader);
-                    invaders[invader.id].audio.die.update_from_model(invader);
-
-                    var create_death_score = function(invader) {
-                        var death_score = new orthographic_text(
-                            //TODO: score based on invader type
-                            "5", 
-                            {
-                                duration: 1, 
-                                scale: {from: 1, to: 5},
-                                colour: {
-                                    from: [1.0, 1.0, 1.0, 1.0],
-                                    to: [1.0, 0.0, 0.0, 0.0]
-                                }
-                            }, 
-                            {
-                                size: 20
-                            }
-                        );
-                        death_score.update_from_model({x: invader.x, y: invader.y});
-
-                        client.add_to_scene(death_score.mesh);
-                        client.temporary_effects.push(death_score);
-                    };
-
-                    if (!invader.active && client.prior_element_value(an_invader, counter).active) {
-                        create_death_score(invader);
-                    }
-                }
-                counter++;
-            }); 
-
-            if (client.value(the_tank).active === false) {
-                //TODO: implement game over man
-            }
-
             client.calculate_score(client.value(all_invaders), client.value(the_duration), client.value(misses));
             if (client.score_changed) {
                 scoreText.update_text(client.score, client.scene);    
