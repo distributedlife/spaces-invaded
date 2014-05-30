@@ -3,9 +3,7 @@ uniform lowp float to_scale;
 uniform lowp float progress;
 varying vec2 tc; 
 
-float lerp(float from, float to, float t) {
-	return (1.0 - t) * from + to * t;
-}
+#include lerp.glsl
 
 void main() { 
 	tc = uv;
