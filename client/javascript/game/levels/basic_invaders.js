@@ -15,6 +15,7 @@ define([
         var all_invader_bullets = function(state, i) { return state.invader_bullets; };
 
         var screen_width = function(state) { return state.dimensions.width; };
+        var screen_height = function(state) { return state.dimensions.height; };
         var the_duration = function(state) { return state.duration; };
         var misses = function(state) { return state.misses; };
 
@@ -195,6 +196,9 @@ define([
 
             var earth = Object.create(sprite({width: width, height: 64, x: 600, y: height, z: 10}, config.resolve_game_image('earth.png')));
             client.add_to_scene(earth.mesh);
+
+            var sky = Object.create(sprite({width: width, height: client.value(screen_height) * 2, x: 317, y: 290, z: 10}, config.resolve_game_image('sky.png')));
+            client.add_to_scene(sky.mesh);
         };
 
         var update = function() {
