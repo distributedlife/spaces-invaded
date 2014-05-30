@@ -7,13 +7,13 @@ define(['lib/particle_effect', 'lib/config'], function(ParticleEffect, config) {
 				{
 			        texture: THREE.ImageUtils.loadTexture(config.resolve_lib_image("particle.png")),
 			        maxAge: 1,
-			        hasPerspective: false
+			        hasPerspective: 0
 			    },
 			    [{
 			        acceleration: new THREE.Vector3(0, 10, 0),
 			        velocity: new THREE.Vector3(0, 10, 0),
 			        particlesPerSecond: 5,
-			        sizeStart: 30,
+			        sizeStart: 20,
 			        sizeEnd: 0,
 			        colorStart: new THREE.Color('white'),
 			        colorEnd: new THREE.Color('red'),
