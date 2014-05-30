@@ -16,7 +16,12 @@ define(['lib/particle_engine'], function(ParticleEngine) {
 					emitter.position.x = updated_model.x;
                 	emitter.position.y = updated_model.y;
                 	emitter.position.z = updated_model.z || 0;
-                	emitter.alive = updated_model.active;
+
+                	if (!updated_model.active) {
+                		emitter.alive = 0.0;
+                	} else {
+                		emitter.alive = 1.0;
+                	}
                 });
 			}
 		};
