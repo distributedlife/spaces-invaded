@@ -28,7 +28,6 @@ define(['lib/particle_engine'], function(ParticleEngine) {
 
 		_.each(emitter_options_array, function(emitter_options) {
 			var emitter = new ParticleEngine.Emitter(emitter_options);
-			
 			rocket_trail.emitters.push(emitter);
 			rocket_trail.group.addEmitter(emitter);
 		});

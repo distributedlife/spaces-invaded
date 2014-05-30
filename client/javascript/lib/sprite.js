@@ -11,6 +11,9 @@ define(["ext/three"], function(THREE) {
     });
     
     var mesh = new THREE.Mesh(geometry, material)
+    mesh.position.x = model.x;
+    mesh.position.y = model.y;
+    mesh.position.z = model.z || 0;
     mesh.rotation.x = -90;
 
     return {

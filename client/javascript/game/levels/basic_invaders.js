@@ -188,8 +188,13 @@ define([
             client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
 
 
+            //TODO: move to any old display
             var axes = buildAxes( 1000 );
-            client.add_to_scene(axes);
+            // client.add_to_scene(axes);
+
+
+            var earth = Object.create(sprite({width: width, height: 64, x: 600, y: height, z: 10}, config.resolve_game_image('earth.png')));
+            client.add_to_scene(earth.mesh);
         };
 
         var update = function() {
