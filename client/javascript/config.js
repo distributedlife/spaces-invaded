@@ -8,13 +8,90 @@ require.config({
       jquery: "ext/zepto.min",
       lodash: "ext/lodash.min",
       text: 'ext/require-text',
-      shader: 'ext/require-shader'
+      shader: 'ext/require-shader',
     },
     shim: {
       "ext/three": {
         init: function() {
           "use strict";
           return this.THREE;
+        }
+      },
+      "ext/three/EffectComposer": {
+        deps: ["ext/three", "ext/three/shaders/CopyShader", "ext/three/passes/ShaderPass", "ext/three/passes/MaskPass"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.EffectComposer;
+        }
+      },
+      "ext/three/passes/BloomPass": {
+        deps: ["ext/three", "ext/three/shaders/CopyShader", "ext/three/shaders/ConvolutionShader"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.BloomPass;
+        }
+      },
+      "ext/three/passes/MaskPass": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.MaskPass;
+        }
+      },
+      "ext/three/passes/RenderPass": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.RenderPass;
+        }
+      },
+      "ext/three/passes/ShaderPass": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.ShaderPass;
+        }
+      },
+      "ext/three/shaders/BleachBypassShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.ConvolutionShader;
+        }
+      },
+      "ext/three/shaders/ConvolutionShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.ConvolutionShader;
+        }
+      },
+      "ext/three/shaders/CopyShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.CopyShader;
+        }
+      },
+      "ext/three/shaders/DotScreenShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.DotScreenShader;
+        }
+      },
+      "ext/three/shaders/HorizontalBlurShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.HorizontalBlurShader;
+        }
+      },
+      "ext/three/shaders/VerticalBlurShader": {
+        deps: ["ext/three"],
+        init: function(THREE) {
+          "use strict";
+          return this.THREE.HorizontalBlurShader;
         }
       },
 			zepto: {

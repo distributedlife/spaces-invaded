@@ -1,4 +1,5 @@
-define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scene_renderer", "lib/window"], function(_, THREE, GridView, AnyOldDisplay, SceneRenderer, window) {
+define(["lodash", "ext/three", "ext/three/EffectComposer",  "ext/three/passes/RenderPass", "ext/three/shaders/HorizontalBlurShader", "lib/grid_view", "lib/any_old_display", "lib/window"], 
+  function(_, THREE, EffectComposer, RenderPass, HorizontalBlurShader, GridView, AnyOldDisplay, window) {
   "use strict";
 
   return function(element, width, height, options, setup_func, update_func) {
@@ -17,19 +18,41 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
     };
 
     var build_scene_renderer = function(scene, camera) {
-      var scene_renderer = Object.create(SceneRenderer(scene, camera));
-      scene_renderer.resize(width, height);
-      window.get_element_by_id(element).appendChild(scene_renderer.renderer.domElement);
+      var renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(width, height);
+      window.get_element_by_id(element).appendChild(renderer.domElement);
 
-      return scene_renderer;
+      return renderer;
     };
+
+    var build_composer = function(scene, camera, renderer) {
+      // var composer = new THREE.EffectComposer(renderer);
+      
+      // var firstpass = new THREE.RenderPass(scene, camera)
+      // hblur.renderToScreen = true;
+      // composer.addPass(firstpass);
+      // var hblur = new THREE.ShaderPass(THREE.HorizontalBlurShader)
+      // var secondpass = new THREE.BloomPass(0.75);
+      // secondpass.renderToScreen = true;
+      // composer.addPass(hblur);
+
+      // composer.addPass(secondpass);
+
+      // return composer;
+    };
+
+    var camera = setup_camera();
+    var scene = create_a_scene();
+    var renderer = build_scene_renderer(scene, camera);
+    var composer = build_composer(scene, camera, renderer)
 
     var display = Object.create(AnyOldDisplay(element, width, height, options, setup_func, update_func)) ;
     _.extend(display, {
-      camera: setup_camera(),
-      scene: create_a_scene(),
+      camera: camera,
+      scene: scene,
       things_in_scene: [],
-      scene_renderer: build_scene_renderer(),
+      renderer: renderer,
+      composer: composer,
 
       expired_effects_func: function(expired_effects) {
         _.each(expired_effects, function(expired_effect) {  this.remove_from_scene(expired_effect.mesh); });
@@ -68,14 +91,16 @@ define(["lodash", "ext/three", "lib/grid_view", "lib/any_old_display", "lib/scen
         display.things_in_scene = [];
       },
       animate: function(dt) {
-        this.scene_renderer.animate(display.scene, display.camera); 
+        this.renderer.render(display.scene, display.camera); 
+        // this.renderer.clear();
+        // this.composer.render();
         if (this.setup_complete) {
           this.tick(dt); 
         }
       },
       resize: function(width, height) {
         display.__proto__.resize(width, height);
-        display.scene_renderer.resize(this.dimensions(width, height).width, this.dimensions(width, height).height);
+        display.renderer.setSize(this.dimensions(width, height).width, this.dimensions(width, height).height);
 
         display.camera.aspect = width / height;
         display.camera.updateProjectionMatrix();
