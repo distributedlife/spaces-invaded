@@ -34,8 +34,7 @@ define([
 
         var create_death_score = function(invader) {
             var death_score = new orthographic_text(
-                //TODO: score based on invader type
-                "5", 
+                client.values[invader.type], 
                 {
                     duration: 0.5, 
                     scale: {from: 1, to: 5},

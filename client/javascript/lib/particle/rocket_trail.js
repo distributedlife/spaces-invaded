@@ -17,7 +17,7 @@ define(['lib/particle_effect', 'lib/config'], function(ParticleEffect, config) {
 			        sizeEnd: 0,
 			        colorStart: new THREE.Color('white'),
 			        colorEnd: new THREE.Color('red'),
-			        alive: 0
+			        alive: 0.0
 			    }]
 			);
 		}
