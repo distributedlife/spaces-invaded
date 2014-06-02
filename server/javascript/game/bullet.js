@@ -14,6 +14,7 @@ module.exports = function(team) {
     team: team,
     name: "bullet",
     active: false,
+    reason: "",
 
     shoot: function(velocity, x, y) {
       this.velocity = velocity;
@@ -21,17 +22,23 @@ module.exports = function(team) {
       this.y = y;
       this.active = true;
     },
-
-    move: function(delta) { this.y += (delta * this.velocity); },
-    update: function(delta) { this.move(delta); },
-    box: function() { return bounding_box(this.x, this.y, this.width, this.height); },
-
+    move: function(delta) { 
+      this.y += (delta * this.velocity); 
+    },
+    update: function(delta) { 
+      this.move(delta); 
+    },
+    box: function() { 
+      return bounding_box(this.x, this.y, this.width, this.height); 
+    },
     collide: function(other_thing) {
       if (other_thing.team !== this.team) {
-        this.die();
+        this.die("collision");
       }
     },
-
-    die: function() { this.active = false; }
+    die: function(reason) { 
+      this.active = false; 
+      this.reason = reason; 
+    }
   };
 };

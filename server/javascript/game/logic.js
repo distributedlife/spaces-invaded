@@ -49,7 +49,7 @@ module.exports = function(game_state) {
 
       _.each(bullets, function(bullet) {
         if (this.is_off_screen(bullet)) { 
-          bullet.die(); 
+          bullet.die("out-of-bounds"); 
 
           if (bullet.team === team.earth) {
             game_state.misses += 1;

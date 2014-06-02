@@ -11,6 +11,9 @@ define(['lib/particle_engine'], function(ParticleEngine) {
 			mesh: function() {
 				return this.group.mesh;
 			},
+			kill_off: function() {
+				_.each(this.emitters, function(emitter) { emitter.alive = 0.0; });
+			},
 			update_from_model: function(updated_model) {
 				_.each(this.emitters, function(emitter) {
 					emitter.position.x = updated_model.x;

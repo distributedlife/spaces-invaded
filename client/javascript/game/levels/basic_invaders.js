@@ -1,8 +1,8 @@
 define([
     "socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 
-    'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail'],
+    'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail', 'lib/particle/temporary/ground_explosion'],
   function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, 
-    score, orthographic_text, helvetiker_regular, RocketTrail)
+    score, orthographic_text, helvetiker_regular, RocketTrail, GroundExplosion)
   {
     "use strict";
 
@@ -52,6 +52,14 @@ define([
             client.temporary_effects.push(death_score);
         };
 
+        var create_death_explosion = function(bullet) {
+            var explosion = GroundExplosion.make();
+            explosion.update_from_model({x: bullet.x, y: bullet.y, active: true});
+
+            client.add_to_scene(explosion.mesh());
+            client.temporary_effects.push(explosion);
+        }
+
         var when_tank_changes = function(model, prior_model) {
             tank.update_from_model(model);
             tank_die.update_from_model(model);
@@ -67,6 +75,10 @@ define([
             invader_bullets[model.id].sprite.update_from_model(model);
             invader_bullets[model.id].audio.fire.update_from_model(model);
             invader_bullets[model.id].audio.miss.update_from_model(model);
+
+            if (!model.active && prior_model.active && model.reason === "out-of-bounds") {
+                create_death_explosion(model);
+            }
         };
 
         var when_an_invader_changes = function(model, prior_model) {
@@ -82,6 +94,7 @@ define([
             console.log("TODO: implement game over man");
         };
 
+        //TODO: move to any old display
         var buildAxes = function ( length ) {
             var axes = new THREE.Object3D();
 
@@ -115,14 +128,16 @@ define([
 
         }
 
+
+
         var setup = function() {
-            tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png')));
+            tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png'), {}));
             tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
             tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
             client.add_to_scene(tank.mesh);
 
 
-            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png')));
+            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png'), {}));
             client.add_to_scene(bullet.mesh);
 
 
@@ -143,7 +158,7 @@ define([
 
 
             _.each(client.value(all_invader_bullets), function(bullet) {
-                var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png')));
+                var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png'), {}));
                 var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
                 var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, is_inactive)); 
 
@@ -160,7 +175,7 @@ define([
             
 
             _.each(client.value(all_invaders), function(invader) {
-                var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png")));
+                var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png"), {}));
                 var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
 
                 invaders[invader.id] = {
@@ -190,14 +205,14 @@ define([
 
 
             //TODO: move to any old display
-            var axes = buildAxes( 1000 );
+            // var axes = buildAxes( 1000 );
             // client.add_to_scene(axes);
 
 
-            var earth = Object.create(sprite({width: width, height: 64, x: 600, y: height, z: 10}, config.resolve_game_image('earth.png')));
+            var earth = Object.create(sprite({width: width, height: 64, x: 600, y: height, z: 10}, config.resolve_game_image('earth.png'), {transparent: false}));
             client.add_to_scene(earth.mesh);
 
-            var sky = Object.create(sprite({width: width, height: client.value(screen_height) * 2, x: 317, y: 290, z: 10}, config.resolve_game_image('sky.png')));
+            var sky = Object.create(sprite({width: client.value(screen_width), height: client.value(screen_height) * 2, x: client.value(screen_width) / 2, y: client.value(screen_height) / 2 + 64, z: 10}, config.resolve_game_image('sky.png'), {}));
             client.add_to_scene(sky.mesh);
         };
 

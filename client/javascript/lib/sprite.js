@@ -1,13 +1,19 @@
 define(["ext/three"], function(THREE) {
   "use strict";
   
-  return function(model, texture_filename) {
-    var geometry = new THREE.PlaneGeometry(model.width, model.height);
-    var material = new THREE.MeshBasicMaterial({ 
-      map: THREE.ImageUtils.loadTexture(texture_filename),
+  return function(model, texture_filename, options) {
+    _.defaults(options, {
       transparent: true,
       alphaTest: 0.1,
       blending: THREE.AdditiveBlending
+    });
+
+    var geometry = new THREE.PlaneGeometry(model.width, model.height);
+    var material = new THREE.MeshBasicMaterial({ 
+      map: THREE.ImageUtils.loadTexture(texture_filename),
+      transparent: options.transparent,
+      alphaTest: options.alphaTest,
+      blending: options.blending
     });
     
     var mesh = new THREE.Mesh(geometry, material)

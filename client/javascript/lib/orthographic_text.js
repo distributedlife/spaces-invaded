@@ -23,6 +23,9 @@ define(["ext/three", "lib/temporary_effect", "shader!vertex/scale.glsl", "shader
     var createMeshFromText = function(textToDisplay) {
       var shape = THREE.FontUtils.generateShapes(textToDisplay, display_options);
       
+
+      //TODO: use  wrapper.scale.set(200, 200, 200); for scaling rather than doing it in the shader; move the colour there too
+      //TODO: this allows us to use a normal shader
       var geometry = new THREE.ShapeGeometry(shape);
       geometry.computeBoundingBox();
 
