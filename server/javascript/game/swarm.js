@@ -18,13 +18,12 @@ module.exports = function(invaders) {
 		direction: 1,
 		active: true,
 		team: team.invaders,
+		//TODO: move constants out of the object
 		cols: 10,
 		row_pad: 40,
 		row_margin: 24,
 		col_pad: 60,
 		col_margin: 33,
-		left_extent: 0,
-		right_extent: 500,
 
 		box: function() {
 			var active = active_invaders(invaders);
@@ -43,6 +42,13 @@ module.exports = function(invaders) {
 			if (active_invaders.length === 0) {
 				this.die();
 			}
+
+			_.each(invaders, function(invader) {
+				var blocking = _.select(invaders, function(other_invader) { return other_invader.x === invader.x && other_invader.y > invader.y });
+				if (blocking.length === 0) {
+					invader.has_clear_shot = true;
+				}
+			});
 		},
 
 		position_invader: function(invader, i) {

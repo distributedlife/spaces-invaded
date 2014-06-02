@@ -30,6 +30,7 @@ module.exports = function(bullet, type) {
     invade_drop: 10,
     invade_speedup: 1.075,
     shoot_countdown: Math.random() * number_of_seconds_between_shots,
+    has_clear_shot: false,
     
     spawn: function(cx, cy, direction) {
       this.active = true;
@@ -56,7 +57,7 @@ module.exports = function(bullet, type) {
 
     update: function(delta) { 
       this.shoot_countdown -= delta;
-      if(this.its_time_to_shoot()) {
+      if(this.its_time_to_shoot() && this.has_clear_shot) {
         bullet.shoot(50, this.x, this.y);
 
         this.shoot_countdown = number_of_seconds_between_shots;
