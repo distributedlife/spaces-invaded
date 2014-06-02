@@ -6,14 +6,18 @@ var bounding_box = require('../lib/bounding_box');
 var team = require('./enums/teams');
 var unique = require('../lib/unique');
 
-module.exports = function(bullet, type) {
+module.exports = function(bullet, type, options) {
   var dimensions = {
     "bug":   { width: 44, height: 48},
     "squid": { width: 36, height: 48},
     "skull": { width: 48, height: 48}
   };
 
-  var number_of_seconds_between_shots = 20;
+  options = options || {};
+  _.defaults(options, {
+    bullet_speed: 100,
+    number_of_seconds_between_shots: 20
+  })
 
   return {
     id: unique.id(),
@@ -29,7 +33,7 @@ module.exports = function(bullet, type) {
     direction: 1,
     invade_drop: 10,
     invade_speedup: 1.075,
-    shoot_countdown: Math.random() * number_of_seconds_between_shots,
+    shoot_countdown: Math.random() * options.number_of_seconds_between_shots,
     has_clear_shot: false,
     
     spawn: function(cx, cy, direction) {
@@ -58,9 +62,9 @@ module.exports = function(bullet, type) {
     update: function(delta) { 
       this.shoot_countdown -= delta;
       if(this.its_time_to_shoot() && this.has_clear_shot) {
-        bullet.shoot(50, this.x, this.y);
+        bullet.shoot(options.bullet_speed, this.x, this.y);
 
-        this.shoot_countdown = number_of_seconds_between_shots;
+        this.shoot_countdown = options.number_of_seconds_between_shots;
       }
 
       this.move(delta); 
