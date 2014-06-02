@@ -1,6 +1,7 @@
 require.config({
     paths: {
       "socket.io": "../../socket.io/socket.io",
+      "socket.io-client": "../../socket.io/socket.io",
       underscore: "npm/underscore-min",
       events: "npm/events",
       bacon: "npm/bacon",
@@ -9,6 +10,7 @@ require.config({
       lodash: "ext/lodash.min",
       text: 'ext/require-text',
       shader: 'ext/require-shader',
+      game: "../../game/client/js",
     },
     shim: {
       "ext/three": {

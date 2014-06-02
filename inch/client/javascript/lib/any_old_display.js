@@ -1,4 +1,5 @@
-define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes", "ext/screenfull"], function($, KeyboardController, SoundManager, _, tracks_state_changes, screenfull) {
+define(["zepto", "lib/keyboard_controller", "lib/sound_manager2", "lodash", "lib/tracks_state_changes", "ext/screenfull", 'socket.io-client'], 
+	function($, KeyboardController, SoundManager, _, tracks_state_changes, screenfull, io) {
 	"use strict";
 
 	return function(element, width, height, options, setup_func, update_func) {

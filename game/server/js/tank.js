@@ -1,10 +1,10 @@
 "use strict";
 
-var config = require('../lib/config');
 var _ = require('underscore');
-var bounding_box = require('../lib/bounding_box');
 var teams = require('./enums/teams');
-var unique = require('../lib/unique');
+var config = require('../../../inch/server/javascript/lib/config');
+var bounding_box = require('../../../inch/server/javascript/lib/bounding_box');
+var unique = require('../../../inch/server/javascript/lib/unique');
 
 module.exports = function(bullet) {
   return {

@@ -1,7 +1,7 @@
 define([
-    "socket.io", "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 
+    "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 
     'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail', 'lib/particle/temporary/ground_explosion'],
-  function(io, $, _, OrthographicDisplay, config, sprite, window, audio_emitter, 
+  function($, _, OrthographicDisplay, config, sprite, window, audio_emitter, 
     score, orthographic_text, helvetiker_regular, RocketTrail, GroundExplosion)
   {
     "use strict";

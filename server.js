@@ -1,20 +1,21 @@
 "use strict";
 
+var inch_files = "./inch";
 var _ = require('underscore');
 var express = require('express');
 var app = express();
-require('./configure_express')(app, express, require('consolidate'));
+require(inch_files+'/configure_express')(app, express, require('consolidate'));
 
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
-io.enable('browser client minification');
-io.enable('browser client etag');
-io.enable('browser client gzip');
-io.set('log level', 1); 
+//TODO: renable when re-introduced to socket.io
+// io.enable('browser client minification');
+// io.enable('browser client etag');
+// io.enable('browser client gzip');
 
-var server_lib_files = './server/javascript/lib'
-var server_game_files = './server/javascript/game'
-var client_game_files = './client/javascript/game'
+var server_lib_files = inch_files+'/server/javascript/lib'
+var server_game_files = './game/server/js'
+var client_game_files = './game/client/js'
 
 var game_state = require(server_lib_files+'/state');
 
@@ -43,5 +44,5 @@ var game_engine = require(server_lib_files+'/engine')(game_state, game_logic, in
 
 game_engine.run();
 
-require('./requirejs_node_config')(require('requirejs'));
+require(inch_files+'/requirejs_node_config')(require('requirejs'));
 server.listen(process.env.PORT || 3000);

@@ -1,8 +1,8 @@
 define(function() {
   return {
-    lib_image_path: "/client/img/lib/",
-    game_image_path: "/client/img/game/",
-    audio_path: "/client/audio/game/",
+    lib_image_path: "/client/images/lib/",
+    game_image_path: "/game/client/images/",
+    audio_path: "/game/client/audio/",
     swf_path: "/client/swf/",
 
     global_volume: 0.0,

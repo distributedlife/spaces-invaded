@@ -1,9 +1,9 @@
 "use strict";
 
 var _ = require('underscore');
-var bounding_box = require('../lib/bounding_box');
 var team = require('./enums/teams');
 var invader_types = require('./enums/invaders');
+var bounding_box = require('../../../inch/server/javascript/lib/bounding_box');
 
 module.exports = function(invaders) {
 	var min = function(array) { return Math.min.apply(Math, array); };
