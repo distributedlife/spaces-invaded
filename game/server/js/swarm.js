@@ -25,6 +25,8 @@ module.exports = function(invaders) {
 		row_margin: 24,
 		col_pad: 60,
 		col_margin: 33,
+	    invade_drop: 10,
+		invade_speedup: 1.075,
 
 		box: function() {
 			var active = active_invaders(invaders);
@@ -74,7 +76,7 @@ module.exports = function(invaders) {
 		reverse_direction: function() { this.direction *= -1; },
 
 		invade: function() {
-			_.each(invaders, function(invader) {  invader.invade();  });
+			_.each(invaders, function(invader) {  invader.invade(this.invade_drop, this.invade_speedup);  }.bind(this));
 
 			this.reverse_direction();
 		}

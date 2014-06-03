@@ -18,10 +18,10 @@ module.exports = function(entities) {
     var invaders = [];
 
     for(var i = 0; i < 10; ++i) {
-      invaders.push(new entities.invader(bullets[i], invader_types.squid, {bullet_speed: 300}));
+      invaders.push(new entities.invader(bullets[i], invader_types.squid, {bullet_speed: 300, shot_delay: 5}));
     }
     for(var i = 0; i < 20; ++i) {
-      invaders.push(new entities.invader(bullets[10 + i], invader_types.bug, {bullet_speed: 200}));
+      invaders.push(new entities.invader(bullets[10 + i], invader_types.bug, {bullet_speed: 200, shot_delay: 10}));
     }
     for(var i = 0; i < 20; ++i) {
       invaders.push(new entities.invader(bullets[30 + i], invader_types.skull));

@@ -17,7 +17,7 @@ module.exports = function(bullet, type, options) {
   options = options || {};
   _.defaults(options, {
     bullet_speed: 100,
-    number_of_seconds_between_shots: 20
+    shot_delay: 20
   })
 
   return {
@@ -32,9 +32,7 @@ module.exports = function(bullet, type, options) {
     name: "invader",
     type: type,
     direction: 1,
-    invade_drop: 10,
-    invade_speedup: 1.075,
-    shoot_countdown: Math.random() * options.number_of_seconds_between_shots,
+    shoot_countdown: Math.random() * options.shot_delay,
     has_clear_shot: false,
     
     spawn: function(cx, cy, direction) {
@@ -65,16 +63,16 @@ module.exports = function(bullet, type, options) {
       if(this.its_time_to_shoot() && this.has_clear_shot) {
         bullet.shoot(options.bullet_speed, this.x, this.y);
 
-        this.shoot_countdown = options.number_of_seconds_between_shots;
+        this.shoot_countdown = options.shot_delay;
       }
 
       this.move(delta); 
     },
 
-    invade: function() {
-      this.y += this.invade_drop;
+    invade: function(invade_drop, invade_speedup) {
+      this.y += invade_drop;
       this.direction *= -1;
-      this.velocity *= this.invade_speedup;
+      this.velocity *= invade_speedup;
     }
   };
 };
