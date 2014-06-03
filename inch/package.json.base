@@ -1,0 +1,45 @@
+{
+  "name": "game_derping",
+  "version": "0.0.1",
+  "description": "herp it up a notch",
+  "engines": {
+    "node": "latest",
+    "npm": "latest"
+  },
+  "dependencies": {
+    "express": "latest",
+    "consolidate": "latest",
+    "requirejs": "latest",
+    "nodemon": "latest",
+    "hamljs": "latest",
+    "underscore": "latest",
+    "wrench": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest",
+    "watchjs": "latest",
+    "morgan": "latest",
+    "microtime": "latest",
+    "body-parser": "latest",
+    "screenfull": "~1.2.1",
+    "rekuire": "latest"
+  },
+  "devDependencies": {
+    "amdefine": "latest",
+    "jasmine-node": "latest",
+    "jsdom": "latest",
+    "coffee-script": "latest",
+    "jscoverage-reporter": "latest",
+    "jshint": "latest",
+    "growl": "latest",
+    "jasmine-growl-reporter": "latest",
+    "grunt": "latest",
+    "grunt-bump": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-jasmine-node": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-notify": "latest"
+  },
+  "scripts": {
+    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir spec/ --verbose --forceexit --coffee"
+  }
+}
