@@ -1,0 +1,3 @@
+[submodule "inch"]
+	path = inch
+	url = git@github.com:distributedlife/inch.js.git
