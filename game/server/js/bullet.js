@@ -1,7 +1,8 @@
 "use strict";
 
-var bounding_box = require('../../../inch/server/javascript/lib/bounding_box');
-var unique = require('../../../inch/server/javascript/lib/unique');
+var rek = require('rekuire');
+var bounding_box = rek('inch/private/js/bounding_box');
+var unique = rek('inch/private/js/unique');
 
 module.exports = function(team) {
   return {

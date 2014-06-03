@@ -1,9 +1,10 @@
 "use strict";
 
+var rek = require('rekuire');
 var _ = require('underscore');
-var team = require('./enums/teams');
-var invader_types = require('./enums/invaders');
-var bounding_box = require('../../../inch/server/javascript/lib/bounding_box');
+var team = rek('enums/teams');
+var invader_types = rek('enums/invaders');
+var bounding_box = rek('inch/private/js/bounding_box');
 
 module.exports = function(invaders) {
 	var min = function(array) { return Math.min.apply(Math, array); };

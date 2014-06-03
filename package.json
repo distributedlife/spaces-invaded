@@ -20,7 +20,8 @@
     "morgan": "latest",
     "microtime": "latest",
     "body-parser": "latest",
-    "screenfull": "~1.2.1"
+    "screenfull": "~1.2.1",
+    "rekuire": "latest"
   },
   "devDependencies": {
     "amdefine": "latest",

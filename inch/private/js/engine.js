@@ -1,4 +1,4 @@
-var config = require('../lib/config');
+var config = require('../js/config');
 
 module.exports = function(game_state, game_logic, input_bindings) {
   return {

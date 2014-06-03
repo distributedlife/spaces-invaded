@@ -13,7 +13,7 @@ var io = require('socket.io').listen(server);
 // io.enable('browser client etag');
 // io.enable('browser client gzip');
 
-var server_lib_files = inch_files+'/server/javascript/lib'
+var server_lib_files = inch_files+'/private/js'
 var server_game_files = './game/server/js'
 var client_game_files = './game/client/js'
 

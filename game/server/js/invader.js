@@ -1,10 +1,11 @@
 "use strict";
 
+var rek = require('rekuire');
 var _ = require('underscore');
-var team = require('./enums/teams');
-var config = require('../../../inch/server/javascript/lib/config');
-var bounding_box = require('../../../inch/server/javascript/lib/bounding_box');
-var unique = require('../../../inch/server/javascript/lib/unique');
+var team = rek('enums/teams');
+var config = rek('inch/private/js/config');
+var bounding_box = rek('inch/private/js/bounding_box');
+var unique = rek('inch/private/js/unique');
 
 module.exports = function(bullet, type, options) {
   var dimensions = {
