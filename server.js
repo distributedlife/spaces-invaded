@@ -17,25 +17,27 @@ var server_lib_files = inch_files+'/private/js'
 var server_game_files = './game/server/js'
 var client_game_files = './game/client/js'
 
-var game_state = require(server_lib_files+'/state');
-
+//TODO: move to game folder
 var entities = {
   bullet: require(server_game_files+'/bullet'),
   tank: require(server_game_files+'/tank'),
   invader: require(server_game_files+'/invader'),
-  swarm: require(server_game_files+'/swarm')
+  swarm: require(server_game_files+'/swarm'),
+  fire: require(server_game_files+"/fire")
 }
+
+
+var game_state = require(server_lib_files+'/state');
+_.extend(game_state, require(server_game_files+'/state')(entities));
+
+var game_logic = require(server_game_files+'/logic')(game_state, entities);
+var action_map = require(server_game_files+'/action_map');
+
+
+var watchjs = require('watchjs');
 var user_input = {
 	raw_data: {}
 };
-
-var watchjs = require('watchjs');
-
-_.extend(game_state, require(server_game_files+'/state')(entities));
-
-var game_logic = require(server_game_files+'/logic')(game_state);
-var action_map = require(server_game_files+'/action_map');
-
 require(server_lib_files+'/socket_routes')(io, game_state, user_input, watchjs);
 require(client_game_files+'/routes')(app, game_state);
 

@@ -7,12 +7,27 @@ define([
     "use strict";
 
     return function(element, width, height, options) {
+        var the = function(name) { return function(state) { return state[name]; }; };
+        var all = function(name) { return function(state) { return state[name]; }; };
+        var a = function(name) { return function(state, i) { return state[name][i]; }; };
+        var an = function(name) { return function(state, i) { return state[name][i]; }; };
+        var is = function(name) { return function(thing) { return thing[name] === true; }; };
+        var isnt = function(name) { return function(thing) { return thing[name] === false; }; };
+
+        //the('dimensions', 'width');
+        //is('active');
+        //isnt('active');
+
         var the_tank = function(state) { return state.tank; };
         var tank_bullet = function(state) {return state.bullet; };
-        var an_invader = function(state, i) { return state.invaders[i]; };
+        //TODO: can we remove the need for the 'an' functions
+        //TODO: can we generalise the state functions to take the name of the attribute all('invaders'), the('tank'), an('invader'), a('fire')
         var all_invaders = function(state) { return state.invaders; };
+        var all_invader_bullets = function(state) { return state.invader_bullets; };
+        var all_fires = function(state) { return state.fires; };
+        var an_invader = function(state, i) { return state.invaders[i]; };
         var an_invader_bullet = function(state, i) { return state.invader_bullets[i]; };
-        var all_invader_bullets = function(state, i) { return state.invader_bullets; };
+        var a_fire = function(state, i) { return state.fires[i]; };
 
         var screen_width = function(state) { return state.dimensions.width; };
         var screen_height = function(state) { return state.dimensions.height; };
@@ -33,6 +48,8 @@ define([
         var scoreText = {};
         var rocket_trail = null;
 
+        var fires = {};
+
         var create_death_score = function(invader) {
             var death_score = new orthographic_text(
                 client.values[invader.type], 
@@ -52,14 +69,6 @@ define([
             client.temporary_effects.push(death_score);
         };
 
-        var create_death_explosion = function(bullet) {
-            var explosion = GroundExplosion.make();
-            explosion.update_from_model({x: bullet.x, y: bullet.y, active: true});
-
-            client.add_to_scene(explosion.mesh());
-            client.temporary_effects.push(explosion);
-        }
-
         var when_tank_changes = function(model, prior_model) {
             tank.update_from_model(model);
             tank_die.update_from_model(model);
@@ -75,10 +84,6 @@ define([
             invader_bullets[model.id].sprite.update_from_model(model);
             invader_bullets[model.id].audio.fire.update_from_model(model);
             invader_bullets[model.id].audio.miss.update_from_model(model);
-
-            if (!model.active && prior_model.active && model.reason === "out-of-bounds") {
-                create_death_explosion(model);
-            }
         };
 
         var when_an_invader_changes = function(model, prior_model) {
@@ -92,6 +97,21 @@ define([
 
         var game_over_man = function(model, prior_model) {
             console.log("TODO: implement game over man");
+        };
+
+        var a_fire_lit = function(model) {
+            var fire = GroundExplosion.make({id: model.id});
+            fire.update_from_model({x: model.x, y: model.y, active: true});
+
+            client.add_to_scene(fire.mesh());
+            client.temporary_effects.push(fire);
+
+            fires[model.id] = fire;
+        };
+
+        var a_fire_extinguished = function(prior_model) {
+            fires[prior_model.id].kill_off();
+            fires[prior_model.id] = null;
         };
 
         //TODO: move to any old display
@@ -202,6 +222,8 @@ define([
             client.on_change(tank_bullet, when_tank_bullet_changes);
             client.on_element_change(all_invader_bullets, an_invader_bullet, when_an_invader_bullet_changes);
             client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
+            client.on_element_arrival(all_fires, a_fire_lit);
+            client.on_element_removal(all_fires, a_fire_extinguished);
 
 
             //TODO: move to any old display

@@ -26,20 +26,9 @@
   "devDependencies": {
     "amdefine": "latest",
     "jasmine-node": "latest",
-    "jsdom": "latest",
-    "coffee-script": "latest",
-    "jscoverage-reporter": "latest",
-    "jshint": "latest",
-    "growl": "latest",
-    "jasmine-growl-reporter": "latest",
-    "grunt": "latest",
-    "grunt-bump": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-jasmine-node": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-notify": "latest"
+    "jsdom": "latest"
   },
   "scripts": {
-    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir spec/ --verbose --forceexit --coffee"
+    "test": "node node_modules/jasmine-node/bin/jasmine-node --test-dir inch/spec game/spec/ --verbose --forceexit --coffee"
   }
 }

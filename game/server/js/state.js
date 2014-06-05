@@ -40,5 +40,6 @@ module.exports = function(entities) {
     invader_bullets: invader_bullets,
     invaders: invaders,
     swarm: new entities.swarm(invaders),
+    fires: []
   };
 };
