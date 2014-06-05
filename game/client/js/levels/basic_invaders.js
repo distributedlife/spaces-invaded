@@ -63,6 +63,9 @@ define([
             invaders[model.id].sprite.update_from_model(model);
             invaders[model.id].audio.die.update_from_model(model);
 
+            if (prior_model === null) {
+                return;
+            }
             if (!model.active && prior_model.active) {
                 create_death_score(model);
             }
