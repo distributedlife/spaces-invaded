@@ -7,35 +7,8 @@ define([
     "use strict";
 
     return function(element, width, height, options) {
-        var the = function(name) { return function(state) { return state[name]; }; };
-        var all = function(name) { return function(state) { return state[name]; }; };
-        var a = function(name) { return function(state, i) { return state[name][i]; }; };
-        var an = function(name) { return function(state, i) { return state[name][i]; }; };
-        var is = function(name) { return function(thing) { return thing[name] === true; }; };
-        var isnt = function(name) { return function(thing) { return thing[name] === false; }; };
-
-        //the('dimensions', 'width');
-        //is('active');
-        //isnt('active');
-
-        var the_tank = function(state) { return state.tank; };
-        var tank_bullet = function(state) {return state.bullet; };
-        //TODO: can we remove the need for the 'an' functions
-        //TODO: can we generalise the state functions to take the name of the attribute all('invaders'), the('tank'), an('invader'), a('fire')
-        var all_invaders = function(state) { return state.invaders; };
-        var all_invader_bullets = function(state) { return state.invader_bullets; };
-        var all_fires = function(state) { return state.fires; };
-        var an_invader = function(state, i) { return state.invaders[i]; };
-        var an_invader_bullet = function(state, i) { return state.invader_bullets[i]; };
-        var a_fire = function(state, i) { return state.fires[i]; };
-
         var screen_width = function(state) { return state.dimensions.width; };
         var screen_height = function(state) { return state.dimensions.height; };
-        var the_duration = function(state) { return state.duration; };
-        var misses = function(state) { return state.misses; };
-
-        var is_inactive = function(thing) { return thing.active === false; };
-        var is_active = function(thing) { return thing.active === true; };
 
         var tank = null;
         var bullet = null;
@@ -99,7 +72,7 @@ define([
             console.log("TODO: implement game over man");
         };
 
-        var a_fire_lit = function(model) {
+        var a_fire_lit = function(model, prior_model) {
             var fire = GroundExplosion.make({id: model.id});
             fire.update_from_model({x: model.x, y: model.y, active: true});
 
@@ -109,9 +82,9 @@ define([
             fires[model.id] = fire;
         };
 
-        var a_fire_extinguished = function(prior_model) {
-            fires[prior_model.id].kill_off();
-            fires[prior_model.id] = null;
+        var a_fire_extinguished = function(model, prior_model) {
+            fires[model.id].kill_off();
+            fires[model.id] = null;
         };
 
         //TODO: move to any old display
@@ -151,13 +124,13 @@ define([
 
 
         var setup = function() {
-            tank = Object.create(sprite(client.value(the_tank), config.resolve_game_image('tank.png'), {}));
-            tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, is_inactive));
-            tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, is_active));
+            tank = Object.create(sprite(client.value(client.the('tank')), config.resolve_game_image('tank.png'), {}));
+            tank_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_die.mp3'), {}, client.isnt('active')));
+            tank_bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('tank_bullet.mp3'), {}, client.is('active')));
             client.add_to_scene(tank.mesh);
 
 
-            bullet = Object.create(sprite(client.value(tank_bullet), config.resolve_game_image('tank_bullet.png'), {}));
+            bullet = Object.create(sprite(client.value(client.the('bullet')), config.resolve_game_image('tank_bullet.png'), {}));
             client.add_to_scene(bullet.mesh);
 
 
@@ -177,10 +150,10 @@ define([
 
 
 
-            _.each(client.value(all_invader_bullets), function(bullet) {
+            _.each(client.value(client.all('invader_bullets')), function(bullet) {
                 var bullet_sprite = Object.create(sprite(bullet, config.resolve_game_image('invader_bullet.png'), {}));
-                var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, is_active));
-                var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, is_inactive)); 
+                var bullet_fire = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_fire.wav'), { volume: 40}, client.is('active')));
+                var bullet_miss = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_bullet_miss.wav'), { volume: 30}, client.isnt('active'))); 
 
                 invader_bullets[bullet.id] = {
                     sprite: bullet_sprite,
@@ -194,9 +167,9 @@ define([
             });
             
 
-            _.each(client.value(all_invaders), function(invader) {
+            _.each(client.value(client.all('invaders')), function(invader) {
                 var invader_sprite = Object.create(sprite(invader, config.resolve_game_image("invader_"+invader.type+".png"), {}));
-                var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, is_inactive));
+                var invader_die = Object.create(audio_emitter(client.sound_manager, config.resolve_audio('invader_die.mp3'), {volume: 25}, client.isnt('active')));
 
                 invaders[invader.id] = {
                     sprite: invader_sprite,
@@ -217,13 +190,13 @@ define([
             client.permanent_effects.push(rocket_trail);
 
 
-            client.on_change(the_tank, when_tank_changes);
-            client.on_conditional_change(the_tank, is_inactive, game_over_man);
-            client.on_change(tank_bullet, when_tank_bullet_changes);
-            client.on_element_change(all_invader_bullets, an_invader_bullet, when_an_invader_bullet_changes);
-            client.on_element_change(all_invaders, an_invader, when_an_invader_changes);
-            client.on_element_arrival(all_fires, a_fire_lit);
-            client.on_element_removal(all_fires, a_fire_extinguished);
+            client.on_change(client.the('tank'), when_tank_changes);
+            client.on_conditional_change(client.the('tank'), client.isnt('active'), game_over_man);
+            client.on_change(client.the('bullet'), when_tank_bullet_changes);
+            client.on_element_change(client.all('invader_bullets'), when_an_invader_bullet_changes);
+            client.on_element_change(client.all('invaders'), when_an_invader_changes);
+            client.on_element_arrival(client.all('fires'), a_fire_lit);
+            client.on_element_removal(client.all('fires'), a_fire_extinguished);
 
 
             //TODO: move to any old display
@@ -239,7 +212,7 @@ define([
         };
 
         var update = function() {
-            client.calculate_score(client.value(all_invaders), client.value(the_duration), client.value(misses));
+            client.calculate_score(client.value(client.all('invaders')), client.value(client.the('duration')), client.value(client.the('misses')));
             if (client.score_changed) {
                 scoreText.update_text(client.score, client.scene);    
             }
