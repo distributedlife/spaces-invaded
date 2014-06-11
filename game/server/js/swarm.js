@@ -36,7 +36,7 @@ module.exports = function(invaders) {
 
 			var width = max_x - min_x;
 
-			return bounding_box(max_x - (width / 2), this.y, width, this.height); 
+			return bounding_box(this, max_x - (width / 2), this.y, width, this.height); 
 		},
 
 		die: function() { this.active = false; },

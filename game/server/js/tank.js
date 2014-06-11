@@ -25,11 +25,14 @@ module.exports = function(bullet) {
       this.active = false;
     },
 
-    box: function() { return bounding_box(this.x, this.y, this.width, this.height); },
+    box: function() { return bounding_box(this, this.x, this.y, this.width, this.height); },
     
     collide: function(other_thing) {
       if (other_thing.team === teams.invaders) {
         this.die();
+      }
+      if (other_thing.name === "fire") {
+        this.to_move /= 2;
       }
     },
 

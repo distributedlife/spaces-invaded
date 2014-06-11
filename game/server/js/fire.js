@@ -21,9 +21,13 @@ module.exports = function(model) {
     name: "fire",
     active: true,
 
-    update: function(delta) { this.tick(delta); },
-    box: function() { return bounding_box(this.x, this.y, this.width, this.height); },
-    collide: function(other_thing) {}
+    collisions: 0,
+
+    update: function(delta) { this.tick(delta * (this.collisions + 1)); },
+    box: function() { return bounding_box(this, this.x, this.y, this.width, this.height); },
+    collide: function(other_thing) {
+      this.collisions++;
+    }
   });
 
   return fire;

@@ -44,7 +44,7 @@ module.exports = function(bullet, type, options) {
     
     die: function() { this.active = false; },
 
-    box: function() { return bounding_box(this.x, this.y, this.width, this.height); },
+    box: function() { return bounding_box(this, this.x, this.y, this.width, this.height); },
     
     collide: function(other_thing) {
       if (other_thing.team === team.earth) {

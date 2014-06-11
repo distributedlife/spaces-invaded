@@ -21,15 +21,18 @@ module.exports = function(game_state, entities) {
       var active_things = _.where(this.all_the_things(), {active: true});
       //TODO: pull functionup to lib/logic but make invocation manual
       var things_to_update = _.reject(active_things, function(thing) { return thing.update === undefined; });
+
+      //TODO: pull functionup to lib/logic but make invocation manual
+      var things_that_can_collide = _.reject(active_things, function(thing) { return thing.collide === undefined; });
+      this.check_for_collisions(things_that_can_collide);
+
+
       //TODO: pull functionup to lib/logic but make invocation manual
       _.each(things_to_update, function(thing) { thing.update(dt); });
 
       this.check_for_bullets_off_screen(active_things);
       this.check_for_swarm_at_edge_of_screen();
 
-      //TODO: pull functionup to lib/logic but make invocation manual
-      var things_that_can_collide = _.reject(active_things, function(thing) { return thing.collide === undefined; });
-      this.check_for_collisions(things_that_can_collide);
 
       //TODO: pull functionup to lib/logic but make invocation manual
       this.expire_temporary_things();

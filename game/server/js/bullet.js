@@ -30,7 +30,7 @@ module.exports = function(team) {
       this.move(delta); 
     },
     box: function() { 
-      return bounding_box(this.x, this.y, this.width, this.height); 
+      return bounding_box(this, this.x, this.y, this.width, this.height); 
     },
     collide: function(other_thing) {
       if (other_thing.team !== this.team) {
