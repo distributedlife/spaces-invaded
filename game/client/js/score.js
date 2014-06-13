@@ -18,8 +18,7 @@ define(["lodash"], function(_) {
                 this.score += _.where(invaders, {active: false, type: type}).length * this.values[type];
             }.bind(this));
 
-            //TODO: write a test for ~~ of a number to see if it has any biases during rounding.
-            // this.score -= ~~(duration);
+            this.score -= Math.round(duration);
             this.score -= misses;
 
             this.score_changed = old_score !== this.score;

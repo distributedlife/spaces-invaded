@@ -4,6 +4,9 @@ exports.requirejs = function() {
   requirejs.config({
     baseUrl: __dirname + '/../client/js',
     nodeRequire: require,
+    paths: {
+      lodash: "../../../inch/public/js/ext/lodash.min"
+    },
     shim: {}
   });
 
