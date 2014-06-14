@@ -30,13 +30,13 @@ define([
             var death_score = new orthographic_text(
                 client.values[invader.type], 
                 {
-                    duration: 0.5, 
+                    duration: 0.5,
+                    transparent: true, 
                     scale: {from: 1, to: 5},
                     colour: {
                         from: [1.0, 1.0, 1.0, 1.0],
                         to: [1.0, 0.0, 0.0, 0.0]
-                    },
-                    size: 20
+                    }
                 }
             );
             death_score.update_from_model({x: invader.x, y: invader.y});
@@ -138,8 +138,7 @@ define([
                 alignment: { 
                     horizontal: "right", 
                     vertical: "top"
-                },
-                size: 20
+                }
             };
             scoreText = Object.create(orthographic_text(
                 client.score, 
