@@ -17,15 +17,7 @@ var server_lib_files = inch_files+'/private/js'
 var server_game_files = './game/server/js'
 var client_game_files = './game/client/js'
 
-//TODO: move to game folder
-var entities = {
-  bullet: require(server_game_files+'/bullet'),
-  tank: require(server_game_files+'/tank'),
-  invader: require(server_game_files+'/invader'),
-  swarm: require(server_game_files+'/swarm'),
-  fire: require(server_game_files+"/fire")
-}
-
+var entities = require(server_game_files+'/entities');
 
 var game_state = require(server_lib_files+'/state');
 _.extend(game_state, require(server_game_files+'/state')(entities));
