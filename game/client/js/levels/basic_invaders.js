@@ -134,15 +134,14 @@ define([
             client.add_to_scene(bullet.mesh);
 
 
-            var scoreDisplayOptions = {
-                alignment: { 
-                    horizontal: "right", 
-                    vertical: "top"
-                }
-            };
             scoreText = Object.create(orthographic_text(
                 client.score, 
-                scoreDisplayOptions
+                {
+                    alignment: { 
+                        horizontal: "right", 
+                        vertical: "top"
+                    }
+                }
             ));
             scoreText.update_from_model({x: client.value(screen_width) - 10, y: 0});
             client.add_to_scene(scoreText.mesh);
