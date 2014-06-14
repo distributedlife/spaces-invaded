@@ -116,16 +116,20 @@ module.exports = function(game_state, entities) {
 
     check_for_tank_at_screen_edge: function() {
       var tank = game_state.tank;
-      if (tank.box().left() < screen_edge_margin) { 
-        tank.stop_left();
-        tank.x = tank.box().half_width;
-      }
-      if (tank.box().right() > game_state.dimensions.width - screen_edge_margin) {
-        tank.stop_right();
-        tank.x = game_state.dimensions.width - tank.box().half_width;
-      }
+
+      _.each(tank.box(), function(bb) {
+        if (bb.left() < screen_edge_margin) { 
+          tank.stop_left();
+          tank.x = bb.half_width;
+        }
+        if (bb.right() > game_state.dimensions.width - screen_edge_margin) {
+          tank.stop_right();
+          tank.x = game_state.dimensions.width - bb.half_width;
+        }
+      });
     },
 
+    //TODO: move to somewhere generic
     expire_temporary_things: function() {
       this.temporary_things = _.select(this.temporary_things, function(thing) { return thing.is_alive() === true; });
       game_state.fires = _.select(game_state.fires, function(thing) { return thing.is_alive() === true; });

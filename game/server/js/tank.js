@@ -27,13 +27,12 @@ module.exports = function(bullet) {
     },
 
     box: function() {
-      return bounding_box(this, this.x, this.y, this.width, this.height);
-      // return [
-      //   bounding_box(this, this.x, this.y + 18, 6, 6),
-      //   bounding_box(this, this.x, this.y + 12, 18, 12),
-      //   bounding_box(this, this.x, this.y, 54, 6),
-      //   bounding_box(this, this.x, this.y - 9, 66, 18)
-      // ]
+      return [
+        bounding_box(this, this.x, this.y - 8, 6,  6),
+        bounding_box(this, this.x, this.y - 4, 18, 12),
+        bounding_box(this, this.x, this.y + 0,  54, 6),
+        bounding_box(this, this.x, this.y + 5,  66, 18)
+      ]
     },
     
     collide: function(other_thing) {
