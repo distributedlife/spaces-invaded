@@ -26,6 +26,14 @@ module.exports = function(game_state, entities) {
       var things_that_can_collide = _.reject(active_things, function(thing) { return thing.collide === undefined; });
       this.check_for_collisions(things_that_can_collide);
 
+      //TODO: move up and only do on conditional
+      game_state.wireframes = _.map(things_that_can_collide, function(thing) {
+        return {
+          id: thing.id,
+          boxes: _.map([].concat(thing.box()), function(box) { return box.dimensions(); }),
+          colliding: thing.colliding || false,
+        };
+      });
 
       //TODO: pull functionup to lib/logic but make invocation manual
       _.each(things_to_update, function(thing) { thing.update(dt); });
@@ -38,17 +46,31 @@ module.exports = function(game_state, entities) {
       this.expire_temporary_things();
     },
 
-    check_for_collisions: function(active_things) {
-      _.each(active_things, function(thing) {
-        _.each(active_things, function(other_thing) {
-          if(thing.box().is_colliding_with(other_thing.box())) {
-            thing.collide(other_thing);
-            other_thing.collide(thing);
+    //TODO: move to a aabb_collision_detection
+    check_for_collisions: function(things_that_can_collide) {
+      _.each(things_that_can_collide, function(thing) {
+        _.each(things_that_can_collide, function(other_thing) {
+
+          var thing_boxes = [].concat(thing.box());
+          var other_thing_boxes = [].concat(other_thing.box());
+
+          for(var i = 0; i < thing_boxes.length; i++) {
+            for(var j = 0; j < other_thing_boxes.length; j++) {
+
+              if(thing_boxes[i].is_colliding_with(other_thing_boxes[j])) {
+                thing.collide(other_thing);
+                other_thing.collide(thing);
+
+                return;
+              }
+
+            }
           }
         });
       });
     },
 
+    //TODO: move to game_world_maps_to_screen_size
     is_off_screen: function(thing) {
       if (thing.box().bottom() < 0) { return true; }
       if (thing.box().top() > game_state.dimensions.height) { return true; }

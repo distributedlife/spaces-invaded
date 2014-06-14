@@ -19,13 +19,22 @@ module.exports = function(bullet) {
     active: true,
     name: "tank",
     to_move: 0,
+    colliding: false,
     
     die: function() {
       if (config.nodamage) { return; }
       this.active = false;
     },
 
-    box: function() { return bounding_box(this, this.x, this.y, this.width, this.height); },
+    box: function() {
+      return bounding_box(this, this.x, this.y, this.width, this.height);
+      // return [
+      //   bounding_box(this, this.x, this.y + 18, 6, 6),
+      //   bounding_box(this, this.x, this.y + 12, 18, 12),
+      //   bounding_box(this, this.x, this.y, 54, 6),
+      //   bounding_box(this, this.x, this.y - 9, 66, 18)
+      // ]
+    },
     
     collide: function(other_thing) {
       if (other_thing.team === teams.invaders) {
@@ -34,6 +43,8 @@ module.exports = function(bullet) {
       if (other_thing.name === "fire") {
         this.to_move /= 2;
       }
+
+      this.colliding = true;
     },
 
     move_left: function(force) { this.to_move = this.maxVelocity * force * -1; },
@@ -53,7 +64,10 @@ module.exports = function(bullet) {
       this.to_move -= move_this_frame;
     },
 
-    update: function(delta) { this.move(delta); },
+    update: function(delta) { 
+      this.colliding = false;
+      this.move(delta); 
+    },
     
     shoot: function() {
       if (!this.active) { return; }

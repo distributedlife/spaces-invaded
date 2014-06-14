@@ -1,8 +1,9 @@
 define([
     "zepto", "lodash", "lib/orthographic_display", "lib/config", "lib/sprite", "lib/window", 'lib/audio_emitter', 
-    'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail', 'lib/particle/temporary/ground_explosion'],
+    'game/score', 'lib/orthographic_text', 'font/helvetiker_regular', 'lib/particle/rocket_trail', 'lib/particle/temporary/ground_explosion',
+    'lib/wireframe'],
   function($, _, OrthographicDisplay, config, sprite, window, audio_emitter, 
-    score, orthographic_text, helvetiker_regular, RocketTrail, GroundExplosion)
+    score, orthographic_text, helvetiker_regular, RocketTrail, GroundExplosion, wireframe)
   {
     "use strict";
 
@@ -22,6 +23,8 @@ define([
         var rocket_trail = null;
 
         var fires = {};
+
+        var wireframes = {};
 
         var create_death_score = function(invader) {
             var death_score = new orthographic_text(
@@ -89,6 +92,36 @@ define([
             fires[model.id].kill_off();
             fires[model.id] = null;
         };
+
+
+        //TODO: move up
+        var add_wireframe = function(model, prior_model) {
+            if (wireframes[model.id] !== undefined) {
+                wireframes[model.id].show();  
+                return;
+            }
+
+            var bb_wireframe = new wireframe(model, {});
+            _.each(bb_wireframe.meshes, function(mesh) {
+                client.add_to_scene(mesh);
+            });
+
+            wireframes[model.id] = bb_wireframe;
+        };
+
+        var move_wireframe = function(model, prior_model) {
+            if (wireframes[model.id] === undefined) { add_wireframe(model, prior_model); }
+
+            wireframes[model.id].update_from_model(model);
+        };
+
+        var remove_wireframe = function(model, prior_model) {
+            if (wireframes[model.id] === undefined) { return; }
+
+            wireframes[model.id].hide();  
+        };
+
+
 
         var setup = function() {
             tank = Object.create(sprite(client.value(client.the('tank')), config.resolve_game_image('tank.png'), {}));
@@ -170,6 +203,12 @@ define([
 
             var sky = Object.create(sprite({width: client.value(screen_width), height: client.value(screen_height) * 2, x: client.value(screen_width) / 2, y: client.value(screen_height) / 2 + 64, z: 10}, config.resolve_game_image('sky.png'), {}));
             client.add_to_scene(sky.mesh);
+
+
+            //TODO: move up
+            client.on_element_arrival(client.all('wireframes'), add_wireframe);
+            client.on_element_change(client.all('wireframes'), move_wireframe);
+            client.on_element_removal(client.all('wireframes'), remove_wireframe);
         };
 
         var update = function() {
