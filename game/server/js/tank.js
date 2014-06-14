@@ -58,7 +58,7 @@ module.exports = function(bullet) {
     },
 
     move: function(delta) {
-      var move_this_frame = ~~ (this.to_move * delta);
+      var move_this_frame = Math.round(this.to_move * delta);
       this.x += move_this_frame;
       this.to_move -= move_this_frame;
     },
