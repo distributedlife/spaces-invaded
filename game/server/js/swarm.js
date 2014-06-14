@@ -14,19 +14,42 @@ module.exports = function(invaders) {
     var invader_left_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box().left(); }); };
     var invader_right_x_positions = function(invaders) { return invaders.map(function(invader) { return invader.box().right(); }); };
 
+    var setup = {
+    	columns: 10,
+		row_pad: 40,
+		row_margin: 24,
+		column_pad: 60,
+		column_margin: 33,
+	    invade_drop: 10,
+		invade_speedup: 1.075
+    }
+
+    var position_invader = function(invader, i, direction) {
+		var row = Math.floor(i / setup.columns);
+		var col = i % setup.columns;
+		var x = col * setup.column_pad + setup.column_margin;
+		var y = row * setup.row_pad + setup.row_margin;
+
+		invader.spawn(x, y, direction);
+	};
+
+	var arrange = function(swarm) {
+		var squids = _.where(invaders, {type: invader_types.squid});
+		var bugs = _.where(invaders, {type: invader_types.bug});
+		var skulls = _.where(invaders, {type: invader_types.skull});
+
+		_.each(squids, function(invader, i) { position_invader(invader, i, swarm.direction); }.bind(swarm));
+		_.each(bugs, function(invader, i) { position_invader(invader, i + squids.length, swarm.direction); }.bind(swarm));
+		_.each(skulls, function(invader, i) { position_invader(invader, i + squids.length + bugs.length, swarm.direction); }.bind(swarm));
+
+		return swarm;
+	};
+
 	var swarm = {
 		name: "swarm",
 		direction: 1,
 		active: true,
 		team: team.invaders,
-		//TODO: move constants out of the object
-		cols: 10,
-		row_pad: 40,
-		row_margin: 24,
-		col_pad: 60,
-		col_margin: 33,
-	    invade_drop: 10,
-		invade_speedup: 1.075,
 
 		box: function() {
 			var active = active_invaders(invaders);
@@ -36,7 +59,7 @@ module.exports = function(invaders) {
 
 			var width = max_x - min_x;
 
-			return bounding_box(this, max_x - (width / 2), this.y, width, this.height); 
+			return bounding_box(this, max_x - (width / 2.0), this.y, width, this.height); 
 		},
 
 		die: function() { this.active = false; },
@@ -54,35 +77,14 @@ module.exports = function(invaders) {
 			});
 		},
 
-		position_invader: function(invader, i) {
-			var row = Math.floor(i / this.cols);
-			var col = i % this.cols;
-			var x = col * this.col_pad + this.col_margin;
-			var y = row * this.row_pad + this.row_margin;
-
-			invader.spawn(x, y, this.direction);
-    	},
-
-		arrange: function() {
-			var squids = _.where(invaders, {type: invader_types.squid});
-			var bugs = _.where(invaders, {type: invader_types.bug});
-			var skulls = _.where(invaders, {type: invader_types.skull});
-
-			_.each(squids, function(invader, i) { this.position_invader(invader, i); }.bind(this));
-			_.each(bugs, function(invader, i) { this.position_invader(invader, i + squids.length); }.bind(this));
-			_.each(skulls, function(invader, i) { this.position_invader(invader, i + squids.length + bugs.length); }.bind(this));
-		},
-
 		reverse_direction: function() { this.direction *= -1; },
 
 		invade: function() {
-			_.each(invaders, function(invader) {  invader.invade(this.invade_drop, this.invade_speedup);  }.bind(this));
+			_.each(invaders, function(invader) {  invader.invade(setup.invade_drop, setup.invade_speedup);  }.bind(this));
 
 			this.reverse_direction();
 		}
 	};
 
-	swarm.arrange();
-
-	return swarm;
+	return arrange(swarm);
 };
