@@ -203,7 +203,7 @@ define([
             client.add_to_scene(sky.mesh);
 
 
-            //TODO: move up
+            //TODO: move up, up and away
             client.on_element_arrival(client.all('wireframes'), add_wireframe);
             client.on_element_change(client.all('wireframes'), move_wireframe);
             client.on_element_removal(client.all('wireframes'), remove_wireframe);
